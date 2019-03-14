@@ -16,6 +16,13 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.gson.Gson;
+import com.umeng.socialize.ShareAction;
+import com.umeng.socialize.UMShareAPI;
+import com.umeng.socialize.UMShareListener;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.editorpage.ShareActivity;
+import com.umeng.socialize.media.UMImage;
+import com.umeng.socialize.media.UMWeb;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -41,6 +48,7 @@ import translatedemo.com.translatedemo.eventbus.UpdataInfomation;
 import translatedemo.com.translatedemo.http.HttpUtil;
 import translatedemo.com.translatedemo.http.ProgressSubscriber;
 import translatedemo.com.translatedemo.http.RxHelper;
+import translatedemo.com.translatedemo.rxjava.Api;
 import translatedemo.com.translatedemo.rxjava.ApiUtils;
 import translatedemo.com.translatedemo.util.LoadingDialogUtils;
 import translatedemo.com.translatedemo.util.LogUntil;
@@ -131,6 +139,7 @@ public class NoticeDetailActivity extends BaseActivity{
                     new LogUntil(NoticeDetailActivity.this,TAG+"zixunmessage",new Gson().toJson(stringStatusCode));
                     LoadingDialogUtils.closeDialog(mLoadingDialog);
                     zan_image.setImageResource(R.mipmap.zan2);
+                    zan.setTextColor(getResources().getColor(R.color.c_6273f7));
                     data.isZan=1;
                     isShow();
                 }
@@ -306,8 +315,55 @@ public class NoticeDetailActivity extends BaseActivity{
     /**
      * 分享点击
      */
-    @OnClick(R.id.tv_small_title_layout_head)
+    @OnClick(R.id.shred_image)
     public void shard(){
+        new LogUntil(mcontent,TAG,"分享");
+        UMImage image = new UMImage(NoticeDetailActivity.this, R.mipmap.logo);//资源文件
+            UMWeb  web = new UMWeb(Api.Shared_LODURL);
+            web.setTitle(getResources().getString(R.string.app_name));//标题
+            web.setThumb(image);  //缩略图
+            web.setDescription(getResources().getString(R.string.share_text_content));//描述
+            new ShareAction(NoticeDetailActivity.this)
+                    .withMedia(web)
+                    .setCallback(shareListener)
+                    .setDisplayList(SHARE_MEDIA.QQ,SHARE_MEDIA.QZONE,SHARE_MEDIA.WEIXIN,SHARE_MEDIA.WEIXIN_CIRCLE)
+                    .open();
 
+
+
+    }
+    @OnClick({R.id.iv_back_activity_basepersoninfo,R.id.iv_back_activity_text})
+    public void finishactivity(){
+        finish();
+    }
+
+    private UMShareListener shareListener = new UMShareListener() {
+        /**
+         * @param platform 平台类型
+         * @descrption 分享开始的回调
+         */
+        @Override
+        public void onStart(SHARE_MEDIA platform) {
+        }
+
+        @Override
+        public void onResult(SHARE_MEDIA share_media) {
+
+            ToastUtils.makeText("分享成功");
+        }
+
+        @Override
+        public void onError(SHARE_MEDIA share_media, Throwable throwable) {
+
+        }
+
+        @Override
+        public void onCancel(SHARE_MEDIA share_media) {
+
+        }
+    };
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        UMShareAPI.get(this).onActivityResult(requestCode,resultCode,data);
     }
 }

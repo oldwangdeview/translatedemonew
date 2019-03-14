@@ -14,7 +14,7 @@ android {
         minSdkVersion 22
         targetSdkVersion 26
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -47,6 +47,12 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     implementation 'com.orhanobut:hawk:2.0.0-Alpha'
     implementation 'com.github.wangchenyan:html-text:1.0'
+    implementation 'ch.ielse:switchbutton:1.0.1'
+
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.1.2'
+    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
+    implementation 'com.bigkoo:alertview:1.0.3'
+    implementation(name: 'alipaySdk-15.5.9-20181123210601', ext: 'aar')
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }

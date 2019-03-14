@@ -64,7 +64,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/sp_14"
-                        android:textColor="@color/c_646464"
+                        android:textColor="@color/c_999999"
                         android:text="@string/membercenter_text_botvip"/>
 
                 </LinearLayout>
@@ -331,73 +331,83 @@
                    android:layout_marginTop="@dimen/dp_30"
                    android:orientation="horizontal">
 
-                   <LinearLayout
+                   <!--<LinearLayout-->
+                       <!--android:layout_width="match_parent"-->
+                       <!--android:layout_height="wrap_content"-->
+                       <!--android:orientation="vertical"-->
+                       <!--android:layout_weight="1"-->
+                       <!--android:gravity="center">-->
+                     <!--<TextView-->
+                         <!--android:layout_width="@dimen/dp_60"-->
+                         <!--android:layout_height="@dimen/dp_60"-->
+                         <!--android:background="@drawable/member_shape1"-->
+                         <!--/>-->
+
+                       <!--<TextView-->
+                           <!--android:layout_width="wrap_content"-->
+                           <!--android:layout_height="wrap_content"-->
+                           <!--android:textSize="@dimen/sp_12"-->
+                           <!--android:textColor="@color/c_999999"-->
+                           <!--android:layout_marginTop="@dimen/dp_5"-->
+                           <!--android:layout_marginBottom="@dimen/dp_10"-->
+                           <!--android:text="@string/membercenter_text_hzcd"/>-->
+                   <!--</LinearLayout>-->
+
+                   <!--<LinearLayout-->
+                       <!--android:layout_width="match_parent"-->
+                       <!--android:layout_height="wrap_content"-->
+                       <!--android:orientation="vertical"-->
+                       <!--android:layout_weight="1"-->
+                       <!--android:gravity="center">-->
+                       <!--<TextView-->
+                           <!--android:layout_width="@dimen/dp_60"-->
+                           <!--android:layout_height="@dimen/dp_60"-->
+                           <!--android:background="@drawable/member_shape2"-->
+                           <!--/>-->
+
+                       <!--<TextView-->
+                           <!--android:layout_width="wrap_content"-->
+                           <!--android:layout_height="wrap_content"-->
+                           <!--android:textSize="@dimen/sp_12"-->
+                           <!--android:textColor="@color/c_999999"-->
+                           <!--android:layout_marginTop="@dimen/dp_5"-->
+                           <!--android:layout_marginBottom="@dimen/dp_10"-->
+                           <!--android:text="@string/membercenter_text_hzcd"/>-->
+                   <!--</LinearLayout>-->
+
+
+                   <!--<LinearLayout-->
+                       <!--android:layout_width="match_parent"-->
+                       <!--android:layout_height="wrap_content"-->
+                       <!--android:orientation="vertical"-->
+                       <!--android:layout_weight="1"-->
+                       <!--android:gravity="center">-->
+                       <!--<TextView-->
+                           <!--android:layout_width="@dimen/dp_60"-->
+                           <!--android:layout_height="@dimen/dp_60"-->
+                           <!--android:background="@drawable/member_shape3"-->
+                           <!--/>-->
+
+                       <!--<TextView-->
+                           <!--android:layout_width="wrap_content"-->
+                           <!--android:layout_height="wrap_content"-->
+                           <!--android:textSize="@dimen/sp_12"-->
+                           <!--android:textColor="@color/c_999999"-->
+                           <!--android:layout_marginTop="@dimen/dp_5"-->
+                           <!--android:layout_marginBottom="@dimen/dp_10"-->
+                           <!--android:text="@string/membercenter_text_hzcd"/>-->
+                   <!--</LinearLayout>-->
+
+                   <!--<android.support.v7.widget.RecyclerView-->
+                       <!--android:id="@+id/cd_recyclerview"-->
+                       <!--android:layout_width="match_parent"-->
+                       <!--android:layout_height="@dimen/dp_100"></android.support.v7.widget.RecyclerView>-->
+
+                   <translatedemo.com.translatedemo.view.MyGridView
+                       android:id="@+id/cd_recyclerview"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
-                       android:orientation="vertical"
-                       android:layout_weight="1"
-                       android:gravity="center">
-                     <TextView
-                         android:layout_width="@dimen/dp_60"
-                         android:layout_height="@dimen/dp_60"
-                         android:background="@drawable/member_shape1"
-                         />
-
-                       <TextView
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:textSize="@dimen/sp_12"
-                           android:textColor="@color/c_999999"
-                           android:layout_marginTop="@dimen/dp_5"
-                           android:layout_marginBottom="@dimen/dp_10"
-                           android:text="@string/membercenter_text_hzcd"/>
-                   </LinearLayout>
-
-                   <LinearLayout
-                       android:layout_width="match_parent"
-                       android:layout_height="wrap_content"
-                       android:orientation="vertical"
-                       android:layout_weight="1"
-                       android:gravity="center">
-                       <TextView
-                           android:layout_width="@dimen/dp_60"
-                           android:layout_height="@dimen/dp_60"
-                           android:background="@drawable/member_shape2"
-                           />
-
-                       <TextView
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:textSize="@dimen/sp_12"
-                           android:textColor="@color/c_999999"
-                           android:layout_marginTop="@dimen/dp_5"
-                           android:layout_marginBottom="@dimen/dp_10"
-                           android:text="@string/membercenter_text_hzcd"/>
-                   </LinearLayout>
-
-
-                   <LinearLayout
-                       android:layout_width="match_parent"
-                       android:layout_height="wrap_content"
-                       android:orientation="vertical"
-                       android:layout_weight="1"
-                       android:gravity="center">
-                       <TextView
-                           android:layout_width="@dimen/dp_60"
-                           android:layout_height="@dimen/dp_60"
-                           android:background="@drawable/member_shape3"
-                           />
-
-                       <TextView
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:textSize="@dimen/sp_12"
-                           android:textColor="@color/c_999999"
-                           android:layout_marginTop="@dimen/dp_5"
-                           android:layout_marginBottom="@dimen/dp_10"
-                           android:text="@string/membercenter_text_hzcd"/>
-                   </LinearLayout>
-
+                       android:numColumns="3"></translatedemo.com.translatedemo.view.MyGridView>
                </LinearLayout>
                 <TextView
                     android:layout_width="match_parent"

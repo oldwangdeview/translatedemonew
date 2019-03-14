@@ -13,6 +13,7 @@ import java.util.Map;
 
 import translatedemo.com.translatedemo.R;
 import translatedemo.com.translatedemo.base.BaseRecycleAdapter;
+import translatedemo.com.translatedemo.bean.LanuageListBean;
 import translatedemo.com.translatedemo.bean.ListBean_information;
 import translatedemo.com.translatedemo.help.RecycleViewHolder;
 import translatedemo.com.translatedemo.interfice.ListOnclickLister;
@@ -22,11 +23,12 @@ import translatedemo.com.translatedemo.util.UIUtils;
  * Created by oldwang on 2019/1/17 0017.
  */
 
-public class TanslateTitleAdpater extends BaseRecycleAdapter<String> {
+public class TanslateTitleAdpater extends BaseRecycleAdapter<LanuageListBean> {
     TextView translate_btn;
     ListOnclickLister mlister;
+
     private static Map<Integer,Boolean> mclick = new HashMap<>();
-    public TanslateTitleAdpater(Context context, List<String> datas,int clickindex) {
+    public TanslateTitleAdpater(Context context, List<LanuageListBean> datas,int clickindex) {
         super(context, datas, R.layout.translatetitle_btn_item);
         for(int i =0;i<datas.size();i++){
             if(i!=clickindex){
@@ -38,7 +40,7 @@ public class TanslateTitleAdpater extends BaseRecycleAdapter<String> {
     }
 
     @Override
-    protected void setData(RecycleViewHolder holder, String s, final int position) {
+    protected void setData(RecycleViewHolder holder, LanuageListBean s, final int position) {
         translate_btn = holder.getItemView(R.id.translate_btn);
 
         if(mclick.get(position)){
@@ -48,7 +50,7 @@ public class TanslateTitleAdpater extends BaseRecycleAdapter<String> {
             translate_btn.setBackgroundResource(R.drawable.tranlate_titlebtn_shape1);
             translate_btn.setTextColor(mContext.getResources().getColor(R.color.c_999999));
         }
-        translate_btn.setText(s);
+        translate_btn.setText(s.name);
         translate_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,4 +76,33 @@ public class TanslateTitleAdpater extends BaseRecycleAdapter<String> {
         }
     }
 
+    public void setclickindex(int index){
+        mclick.put(index,true);
+    }
+
+
+    public void setclickde(int id){
+        if(mDatas!=null&&mDatas.size()>0) {
+            steallclickfalse();
+            for (int i = 0; i < mDatas.size(); i++) {
+                LanuageListBean data = mDatas.get(i);
+                if (data.id == id) {
+                    mclick.put(i, true);
+                }
+            }
+        }
+       notifyDataSetChanged();
+    }
+
+    public String getclicdname(int id){
+        if(mDatas!=null&&mDatas.size()>0) {
+            for (int i = 0; i < mDatas.size(); i++) {
+                LanuageListBean data = mDatas.get(i);
+                if (data.id == id) {
+                    return data.name;
+                }
+            }
+        }
+        return null;
+    }
 }

@@ -209,11 +209,14 @@ public class FeedBackActivity extends BaseActivity {
                     }
                     break;
                 case Contans.GALLERY_REQUEST_CODE:
-                    if(filepath.size()<Addimageadpater.MAX_IMAGE) {
-                        filepath.add(filepath.size() - 1, PhotoUtils.getPath(this, data.getData()));
-                    }else{
-                        filepath.remove("addimage");
-                        filepath.add(filepath.size() - 1, PhotoUtils.getPath(this, data.getData()));
+                    String mfilepathoimage = PhotoUtils.getPath(this, data.getData());
+                    if(new File(mfilepathoimage).length()<5242880) {
+                        if (filepath.size() < Addimageadpater.MAX_IMAGE) {
+                            filepath.add(filepath.size() - 1, PhotoUtils.getPath(this, data.getData()));
+                        } else {
+                            filepath.remove("addimage");
+                            filepath.add(filepath.size() - 1, PhotoUtils.getPath(this, data.getData()));
+                        }
                     }
                     break;
             }

@@ -82,4 +82,17 @@ public class TranslateBottomAdpater extends BaseRecycleAdapter<DictionaryBean> {
         }
     }
 
+    public void setclick(int id){
+        if(mDatas!=null&&mDatas.size()>0){
+            steallclickfalse();
+            for(int i = 0;i<mDatas.size();i++){
+                DictionaryBean data = mDatas.get(i);
+                if(data.id == id){
+                    mclick.put(i,true);
+                }
+            }
+        }
+        notifyDataSetChanged();
+    }
+
 }

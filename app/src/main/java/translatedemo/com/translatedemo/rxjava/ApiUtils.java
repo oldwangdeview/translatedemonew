@@ -1,6 +1,7 @@
 package translatedemo.com.translatedemo.rxjava;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -16,6 +17,7 @@ import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.CallAdapter;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
@@ -38,7 +40,7 @@ public class ApiUtils {
             sBuilder.readTimeout(10, TimeUnit.SECONDS);
             sBuilder.connectTimeout(10, TimeUnit.SECONDS);
             Retrofit retrofit = new Retrofit.Builder()
-                    .client(sBuilder.build())
+                    .client(getOkHttpClient())
                     .baseUrl(Api.isRelease ? Api.baseUrl : Api.testBaseUrl)
                     .addConverterFactory(gsonConverterFactory)
                     .addCallAdapterFactory(rxJavaCallAdapterFactory)
@@ -64,6 +66,25 @@ public class ApiUtils {
         return sApi;
     }
 
+
+    private static OkHttpClient getOkHttpClient() {
+//日志显示级别
+        HttpLoggingInterceptor.Level level= HttpLoggingInterceptor.Level.BODY;
+//新建log拦截器
+        HttpLoggingInterceptor loggingInterceptor=new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+            @Override
+            public void log(String message) {
+                Log.d("zcb","OkHttp====Message:"+message);
+            }
+        });
+        loggingInterceptor.setLevel(level);
+//定制OkHttp
+        OkHttpClient.Builder httpClientBuilder = new OkHttpClient
+                .Builder();
+//OkHttp进行添加拦截器loggingInterceptor
+        httpClientBuilder.addInterceptor(loggingInterceptor);
+        return httpClientBuilder.build();
+    }
 
 
 

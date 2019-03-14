@@ -15,6 +15,7 @@ import translatedemo.com.translatedemo.activity.MenberCenterActivity;
 import translatedemo.com.translatedemo.bean.MemberListBean;
 import translatedemo.com.translatedemo.contans.Contans;
 import translatedemo.com.translatedemo.interfice.ListOnclickLister;
+import translatedemo.com.translatedemo.util.LogUntil;
 import translatedemo.com.translatedemo.util.UIUtils;
 
 /**
@@ -27,6 +28,8 @@ public class MemberCenterAdpater extends BaseAdapter {
     TextView month;
     TextView money;
     ListOnclickLister lister;
+    TextView keshen;
+    double onemonthmoney = -1;
     public MemberCenterAdpater(Context mContext, List<MemberListBean> listdata){
         this.mContext = mContext;
         this.listdata  = listdata;
@@ -53,6 +56,7 @@ public class MemberCenterAdpater extends BaseAdapter {
         }
         month = convertView.findViewById(R.id.mothone);
         money = convertView.findViewById(R.id.money);
+        keshen = convertView.findViewById(R.id.keshen);
         MemberListBean  data = listdata.get(position);
         convertView.findViewById(R.id.botton).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,9 +72,18 @@ public class MemberCenterAdpater extends BaseAdapter {
             money.setText("");
         }
         if(!TextUtils.isEmpty(data.month+"")&&data.month!=0){
-            month.setText(data.month+mContext.getResources().getString(R.string.membercenter_text_month));
+            month.setText(UIUtils.gettime(data.month,mContext));
         }else{
             month.setText("");
+        }
+
+        if(data.month!=1&&data.month*onemonthmoney-data.amount>0){
+
+
+            keshen.setVisibility(View.VISIBLE);
+            String text = mContext.getResources().getString(R.string.keshen)+ "¥"+((data.month*onemonthmoney-data.amount));
+            keshen.setText(text);
+
         }
 
 
@@ -78,5 +91,9 @@ public class MemberCenterAdpater extends BaseAdapter {
     }
     public void setonitemlistclicklister(ListOnclickLister lister){
         this.lister = lister;
+    }
+
+    public void setonemothmoey(double money){
+        this.onemonthmoney = money;
     }
 }

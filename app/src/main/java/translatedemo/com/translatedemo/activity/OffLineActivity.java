@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.bigkoo.alertview.AlertView;
+import com.bigkoo.alertview.OnItemClickListener;
 import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
@@ -40,6 +42,7 @@ import translatedemo.com.translatedemo.base.BaseActivity;
 import translatedemo.com.translatedemo.bean.DictionaryBean;
 import translatedemo.com.translatedemo.bean.NoticeBean;
 import translatedemo.com.translatedemo.bean.StatusCode;
+import translatedemo.com.translatedemo.eventbus.OverMainactivty;
 import translatedemo.com.translatedemo.eventbus.UpdateUserEvent;
 import translatedemo.com.translatedemo.http.HttpUtil;
 import translatedemo.com.translatedemo.http.ProgressSubscriber;
@@ -95,12 +98,36 @@ public class OffLineActivity extends BaseActivity {
         madpater.setlistOnclickLister(new ListOnclickLister() {
             @Override
             public void onclick(View v, int position) {
-                dolodpath = FileUtils.getSDRoot()+"/translate/"+listdata.get(position).name+".json";
-                showLoadingDialog();
-                downFile((Api.isRelease? Api.baseUrl:Api.testBaseUrl)+"/dictionary/downThesaurus?languageType="+BaseActivity.getLanguetype(OffLineActivity.this)+"&id="+listdata.get(position).id+"&userId="+BaseActivity.getuser().id);
-            }
+                if(BaseActivity.getuser().isMember==1) {
+                    dolodpath = FileUtils.getSDRoot() + "/translate/" + listdata.get(position).id + ".json";
+                    showLoadingDialog();
+                    downFile((Api.isRelease ? Api.baseUrl : Api.testBaseUrl) + "/dictionary/downThesaurus?languageType=" + BaseActivity.getLanguetype(OffLineActivity.this) + "&id=" + listdata.get(position).id + "&userId=" + BaseActivity.getuser().id);
+                }else{
+
+                }
+                }
         });
         getdata();
+
+    }
+
+    public void showdialog(){
+        AlertView alertView = new AlertView(getResources().getString(R.string.help), getResources().getString(R.string.dialog_message), null, null, new String[]{getResources().getString(R.string.translate_text_quxiao), getResources().getString(R.string.translate_text_qued)}, this, AlertView.Style.Alert, new OnItemClickListener() {
+            @Override
+            public void onItemClick(Object o, int position) {
+                if (position==1){
+                    BaseActivity.user=null;
+                    PreferencesUtils.getInstance().putString(BaseActivity.LOGINUSER,"");
+                    EventBus.getDefault().post(new OverMainactivty());
+                    LoginActivity.startactivity(OffLineActivity.this);
+                    finish();
+                }else{
+                    return;
+                }
+
+            }
+        });
+        alertView.show();
 
     }
 
@@ -153,7 +180,7 @@ public class OffLineActivity extends BaseActivity {
 //                    listdata.addAll(stringStatusCode.getData());
                     for(int i=0;i<stringStatusCode.getData().size();i++){
                         DictionaryBean datab = stringStatusCode.getData().get(i);
-                        datab.islode = new File(FileUtils.getSDRoot()+"/translate/"+datab.name+".json").exists();
+                        datab.islode = new File(FileUtils.getSDRoot()+"/translate/"+datab.id+".json").exists();
                         listdata.add(datab);
                     }
                 }

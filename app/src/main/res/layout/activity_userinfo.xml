@@ -50,7 +50,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_1"
-            android:background="@color/c_e5e5e5"/>
+            android:background="@color/c_f5f5f5"/>
     </LinearLayout>
     <!--用户名-->
     <LinearLayout
@@ -85,7 +85,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_1"
-            android:background="@color/c_e5e5e5"/>
+            android:background="@color/c_f5f5f5"/>
     </LinearLayout>
     <!--性别-->
     <LinearLayout
@@ -130,7 +130,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_1"
-            android:background="@color/c_e5e5e5"/>
+            android:background="@color/c_f5f5f5"/>
     </LinearLayout>
     <!--学历-->
     <LinearLayout
@@ -175,7 +175,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_1"
-            android:background="@color/c_e5e5e5"/>
+            android:background="@color/c_f5f5f5"/>
     </LinearLayout>
     <!--年龄-->
     <LinearLayout

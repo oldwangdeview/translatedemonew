@@ -4,22 +4,38 @@ import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bigkoo.alertview.AlertView;
+import com.bigkoo.alertview.OnItemClickListener;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.google.gson.Gson;
+import com.umeng.socialize.ShareAction;
+import com.umeng.socialize.UMShareAPI;
+import com.umeng.socialize.UMShareListener;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.media.UMImage;
+import com.umeng.socialize.media.UMWeb;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -27,7 +43,9 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindArray;
@@ -46,25 +64,36 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import translatedemo.com.translatedemo.R;
+import translatedemo.com.translatedemo.activity.LoginActivity;
+import translatedemo.com.translatedemo.activity.MainActivity;
+import translatedemo.com.translatedemo.activity.NoticeDetailActivity;
 import translatedemo.com.translatedemo.activity.PeopleTranslateActivity;
 import translatedemo.com.translatedemo.activity.UserinfoActivity;
 import translatedemo.com.translatedemo.adpater.ChoiceLangvageAdpater;
+import translatedemo.com.translatedemo.adpater.HisotryAdpater;
 import translatedemo.com.translatedemo.base.BaseActivity;
 import translatedemo.com.translatedemo.base.BaseFragment;
 import translatedemo.com.translatedemo.bean.CollectionListbean;
 import translatedemo.com.translatedemo.bean.InformationBean;
+import translatedemo.com.translatedemo.bean.InputHistoryBean;
 import translatedemo.com.translatedemo.bean.ListBean_information;
 import translatedemo.com.translatedemo.bean.StatusCode;
 import translatedemo.com.translatedemo.contans.Contans;
+import translatedemo.com.translatedemo.eventbus.TranslateEvent;
+import translatedemo.com.translatedemo.eventbus.UpdateUserEvent;
 import translatedemo.com.translatedemo.http.HttpUtil;
 import translatedemo.com.translatedemo.http.ProgressSubscriber;
 import translatedemo.com.translatedemo.http.RxHelper;
 import translatedemo.com.translatedemo.interfice.ListOnclickLister;
+import translatedemo.com.translatedemo.interfice.TextonClickLister;
+import translatedemo.com.translatedemo.rxjava.Api;
 import translatedemo.com.translatedemo.rxjava.ApiUtils;
 import translatedemo.com.translatedemo.rxjava.TranslateApi;
 import translatedemo.com.translatedemo.rxjava.TranslateApiUtils;
+import translatedemo.com.translatedemo.util.CustomClickableSpan;
 import translatedemo.com.translatedemo.util.LoadingDialogUtils;
 import translatedemo.com.translatedemo.util.LogUntil;
+import translatedemo.com.translatedemo.util.PreferencesUtils;
 import translatedemo.com.translatedemo.util.ToastUtils;
 import translatedemo.com.translatedemo.util.UIUtils;
 import translatedemo.com.translatedemo.view.ChoiceDucationDialog;
@@ -84,13 +113,20 @@ public class InformationFragment extends BaseFragment {
     TextView Choice_text2;
     @BindArray(R.array.translate_choiceimage)
     String[] choicedata;
-
     @BindView(R.id.input_editet)
     EditText input_editet;
     @BindArray(R.array.main_translate)
     String[] myOrderTitles;
     @BindView(R.id.data)
     LinearLayout data;
+    @BindView(R.id.history_linearlayout)
+    LinearLayout history_linearlayout;
+    @BindView(R.id.translatedata)
+    RelativeLayout translatedata;
+    @BindView(R.id.history_data)
+    GridView history_data;
+
+    HisotryAdpater historyadpater;
     private Dialog mLoadingDialog;
     private ChoiceLangageDialog choicelangage1,choicelangage2;
     private ChoiceLangvageAdpater chiceadpater1,chiceadpater2;
@@ -100,6 +136,9 @@ public class InformationFragment extends BaseFragment {
     private TextView content;
     private ImageView shoucangimage;
 
+    private boolean updateinput = true;
+    private List<InputHistoryBean> historylistdata = new ArrayList<>();
+    private List<InputHistoryBean> adpaterdata = new ArrayList<>();
     @Override
     public View initView(Context context) {
         return UIUtils.inflate(mContext, R.layout.fragment_information);
@@ -120,6 +159,8 @@ public class InformationFragment extends BaseFragment {
                 collectionDictionary(input_editet.getText().toString().trim());
             }
         });
+        Choice_text1.setText(choicedata[1]);
+        Choice_text2.setText(choicedata[0]);
         tanslaterequest.findViewById(R.id.fuzhi_image).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -136,6 +177,10 @@ public class InformationFragment extends BaseFragment {
                 }
             }
         });
+
+        if(!TextUtils.isEmpty(PreferencesUtils.getInstance().getString(Contans.INPUT_HISTORY,""))){
+            historylistdata = UIUtils.jsonToArrayList(PreferencesUtils.getInstance().getString(Contans.INPUT_HISTORY,""),InputHistoryBean.class);
+        }
         tanslaterequest.findViewById(R.id.pople_translate).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,6 +195,23 @@ public class InformationFragment extends BaseFragment {
                 if(choicelangage1!=null){
                     choicelangage1.dismiss();
                 }
+                String content = input_editet.getText().toString().trim();
+                try {
+                    content = new String(content.getBytes(), "utf-8");
+                }catch (Exception e){
+
+                }
+                String inputdata = Choice_text1.getText().toString().trim();
+                String outputdata = Choice_text2.getText().toString().trim();
+                if(!TextUtils.isEmpty(content)&&!TextUtils.isEmpty(inputdata)&&!TextUtils.isEmpty(outputdata)){
+                    if(history_linearlayout.getVisibility()==View.VISIBLE){
+                        history_linearlayout.setVisibility(View.GONE);
+                        translatedata.setVisibility(View.VISIBLE);
+                    }
+                    translatedata(URLEncoder.encode(content),getoutputtype(inputdata,outputdata));
+                }else{
+                    data.removeAllViews();
+                }
 
             }
         });
@@ -160,9 +222,32 @@ public class InformationFragment extends BaseFragment {
                 if(choicelangage2!=null){
                     choicelangage2.dismiss();
                 }
+                String content = input_editet.getText().toString().trim();
+                try {
+                    content = new String(content.getBytes(), "utf-8");
+                }catch (Exception e){
+
+                }
+                String inputdata = Choice_text1.getText().toString().trim();
+                String outputdata = Choice_text2.getText().toString().trim();
+                if(!TextUtils.isEmpty(content)&&!TextUtils.isEmpty(inputdata)&&!TextUtils.isEmpty(outputdata)){
+                    if(history_linearlayout.getVisibility()==View.VISIBLE){
+                        history_linearlayout.setVisibility(View.GONE);
+                        translatedata.setVisibility(View.VISIBLE);
+                    }
+                    translatedata(URLEncoder.encode(content),getoutputtype(inputdata,outputdata));
+
+                }else{
+                    data.removeAllViews();
+                }
 
             }
         });
+
+        if(BaseActivity.getuser().isMember==0) {
+            getbannerdata();
+        }
+
         input_editet.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -176,24 +261,74 @@ public class InformationFragment extends BaseFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                   String content = input_editet.getText().toString().trim();
-                   try {
-                       content = new String(content.getBytes(), "utf-8");
-                   }catch (Exception e){
+                if(translatedata.getVisibility()==View.VISIBLE){
+                    translatedata.setVisibility(View.GONE);
+                    history_linearlayout.setVisibility(View.VISIBLE);
+                }
+                if(updateinput){
+                    String inputdata = input_editet.getText().toString().trim();
+                    if(historylistdata.size()>0) {
+                        adpaterdata.clear();
+                        if (!TextUtils.isEmpty(inputdata)) {
 
-                   }
-                   String inputdata = Choice_text1.getText().toString().trim();
-                   String outputdata = Choice_text2.getText().toString().trim();
-                   if(!TextUtils.isEmpty(content)&&!TextUtils.isEmpty(inputdata)&&!TextUtils.isEmpty(outputdata)){
-                       translatedata(URLEncoder.encode(content),getoutputtype(inputdata,outputdata));
-                   }else{
-                       data.removeAllViews();
-                   }
+                            for (InputHistoryBean mdatas : historylistdata) {
+
+                                if(mdatas.inoutdata.indexOf(inputdata)>=0){
+                                    adpaterdata.add(0,mdatas);
+                                }
+                            }
+                            if(adpaterdata.size()==0){
+                                adpaterdata.addAll(historylistdata);
+                            }
+
+                        } else {
+
+                            adpaterdata.addAll(historylistdata);
+                        }
+                        if(historyadpater!=null) {
+                            historyadpater.notifyDataSetChanged();
+                        }
+                    }
+                }else{
+                    updateinput = true;
+                }
             }
         });
-        if(BaseActivity.getuser().isMember==0) {
-            getbannerdata();
-        }
+
+        input_editet.setInputType(EditorInfo.TYPE_CLASS_TEXT);
+        input_editet.setImeOptions(EditorInfo.IME_ACTION_GO);
+        input_editet.setOnEditorActionListener(mlister);
+
+        tanslaterequest.findViewById(R.id.shared_image).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UMImage image = new UMImage(mContext, R.mipmap.logo);//资源文件
+                UMWeb web = new UMWeb(Api.Shared_LODURL);
+                web.setTitle(getResources().getString(R.string.app_name));//标题
+                web.setThumb(image);  //缩略图
+                web.setDescription(getResources().getString(R.string.share_text_content));//描述
+                new ShareAction(InformationFragment.this.getActivity())
+                        .withMedia(web)
+                        .setCallback(shareListener)
+                        .setDisplayList(SHARE_MEDIA.QQ,SHARE_MEDIA.QZONE,SHARE_MEDIA.WEIXIN,SHARE_MEDIA.WEIXIN_CIRCLE)
+                        .open();
+
+            }
+        });
+        historyadpater = new HisotryAdpater(adpaterdata,mContext);
+        historyadpater.setonclicklister(new ListOnclickLister() {
+            @Override
+            public void onclick(View v, int position) {
+
+                Message msg = new Message();
+                msg.arg1 = 101;
+                msg.obj = adpaterdata.get(position).outputdata;
+                updateinput = false;
+                input_editet.setText(adpaterdata.get(position).inoutdata);
+                mhandler.sendMessage(msg);
+            }
+        });
+        history_data.setAdapter(historyadpater);
     }
 
     private String getoutputtype(String input,String outpout){
@@ -202,6 +337,17 @@ public class InformationFragment extends BaseFragment {
             type = getlangvagetype(input)+"_"+getlangvagetype(outpout);
         }
         return type;
+    }
+
+    private void showdialog(String data){
+        AlertView alertView = new AlertView("快捷翻译", data, null, null, new String[]{"取消"}, mContext, AlertView.Style.Alert, new OnItemClickListener() {
+            @Override
+            public void onItemClick(Object o, int position) {
+
+
+            }
+        });
+        alertView.show();
     }
 
     private int clickindex(String input,String outpout){
@@ -214,6 +360,8 @@ public class InformationFragment extends BaseFragment {
            return -1;
     }
     private String getlangvagetype(String data){
+        new LogUntil(mContext,TAG,"transtinout_______:"+data);
+        new LogUntil(mContext,TAG,"transtarrlist_______:"+new Gson().toJson(choicedata));
         String outputexttype = "";
         for(int i=0;i<choicedata.length;i++){
             if(data.equals(choicedata[i])){
@@ -228,13 +376,45 @@ public class InformationFragment extends BaseFragment {
                         outputexttype = "en";
                         break;
                     case 3:
-                        outputexttype = "zh-cn";
+                        outputexttype = "zh-tw";
                         break;
+                    case 4:
+                        outputexttype = "de";
+                        break;
+                    case 5:
+                        outputexttype = "fr";
+                        break;
+                    case 6:
+                        outputexttype = "es";
+                        break;
+                    case 7:
+                        outputexttype = "pt";
+                        break;
+                    case 8 :
+                        outputexttype = "it";
+                            break;
+                    case 9:
+                        outputexttype = "ru";
+                        break;
+                    case 10:
+                        outputexttype = "ja";
+                        break;
+                    case 11:
+                        outputexttype = "id";
+                        break;
+                    case 12:
+                        outputexttype = "ms";
+                        break;
+                    case 13:
+                        outputexttype = "ug";
+                        break;
+
                 }
             }else{
                 continue;
             }
         }
+        new LogUntil(mContext,TAG,"transtype_______:"+outputexttype);
         return outputexttype;
     }
 
@@ -272,7 +452,7 @@ public class InformationFragment extends BaseFragment {
     private void getbannerdata(){
 
         Observable observable =
-                ApiUtils.getApi().getinformationlist(BaseActivity.getLanguetype(mContext),1, Contans.cow,BaseActivity.getuser().id+"",1,"2")
+                ApiUtils.getApi().getinformationlist(BaseActivity.getLanguetype(mContext),1, Contans.cow,BaseActivity.getuser().id+"",1,"3")
                         .compose(RxHelper.getObservaleTransformer())
                         .doOnSubscribe(new Consumer<Disposable>() {
                             @Override
@@ -331,6 +511,7 @@ public class InformationFragment extends BaseFragment {
      private void translatedata(final String content,final String outputexttype){
          new LogUntil(mContext,TAG+"content",content);
          new LogUntil(mContext,TAG+"outputexttype",outputexttype);
+         getcollectionstats(content);
 //         if (mLoadingDialog == null) {
 //             mLoadingDialog = LoadingDialogUtils.createLoadingDialog(mContext, "");
 //         }
@@ -340,13 +521,34 @@ public class InformationFragment extends BaseFragment {
              public void run() {
                  super.run();
                  try {
-                     okPost(outputexttype,content);
+                     okPost(outputexttype,content,101);
                  }catch (Exception e){
                      new LogUntil(mContext,TAG+"content",e.getMessage());
                  }
 
              }
          }.start();
+
+     }
+
+     private void tanslatedata(final String centent){
+
+
+
+
+         new Thread(){
+             @Override
+             public void run() {
+                 super.run();
+                 try {
+                     okPost("en_zh-cn",centent,102);
+                 }catch (Exception e){
+                     new LogUntil(mContext,TAG+"content",e.getMessage());
+                 }
+
+             }
+         }.start();
+
 
      }
 
@@ -366,7 +568,7 @@ public class InformationFragment extends BaseFragment {
             imageView = mhandeview.findViewById(R.id.image);
 
             final  String weburl = data.url;
-            UIUtils.loadImageViewRoud(mContext,data.image,imageView,UIUtils.dip2px(15));
+            UIUtils.loadImageView(mContext,data.image,imageView);
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -395,10 +597,24 @@ public class InformationFragment extends BaseFragment {
                 if(mdata.indexOf("[ERR]")>=0){
 
                 }else{
-                    content.setText(mdata);
+                    if(history_linearlayout.getVisibility()==View.VISIBLE){
+                        history_linearlayout.setVisibility(View.GONE);
+                        translatedata.setVisibility(View.VISIBLE);
+                    }
+                    layoutContent(content," "+mdata+" ");
                     data.addView(tanslaterequest);
                 }
             }
+
+            if(msg.arg1==102){
+                mdata = msg.obj+"";
+                if(mdata.indexOf("[ERR]")>=0){
+                    showdialog(mdata);
+                }else{
+                    showdialog(mdata);
+                }
+            }
+
         }
     };
     @Override
@@ -406,7 +622,7 @@ public class InformationFragment extends BaseFragment {
         super.onPause();
         mConvenientBanner.stopTurning();
     }
-     private void okPost(String outputtype, String data) throws IOException {
+     private void okPost(String outputtype, String data,final int type) throws IOException {
         String path = "https://nmt.xmu.edu.cn/nmt"+"?lang="+outputtype+"&src="+data;
 
       OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -429,26 +645,60 @@ public class InformationFragment extends BaseFragment {
                 String string = response.body().string();
                 Message msg = new Message();
                 msg.obj = string;
-                msg.arg1 = 101;
+                msg.arg1 = type;
+                if(type==101){
+                    addhistorydata(new InputHistoryBean(input_editet.getText().toString().trim(),mdata));
+                }
                 mhandler.sendMessage(msg);
             }
         });
 //        return response.body().string();
     }
 
+    TextView.OnEditorActionListener mlister = new TextView.OnEditorActionListener() {
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            new LogUntil(mContext,TAG,actionId+"");
+            switch(actionId){
+                case EditorInfo.IME_ACTION_GO:
+                    String content = input_editet.getText().toString().trim();
+                   try {
+                       content = new String(content.getBytes(), "utf-8");
+                   }catch (Exception e){
+
+                   }
+                   String inputdata = Choice_text1.getText().toString().trim();
+                   String outputdata = Choice_text2.getText().toString().trim();
+                    if(history_linearlayout.getVisibility()==View.VISIBLE){
+                        history_linearlayout.setVisibility(View.GONE);
+                        translatedata.setVisibility(View.VISIBLE);
+                    }
+                   if(!TextUtils.isEmpty(content)&&!TextUtils.isEmpty(inputdata)&&!TextUtils.isEmpty(outputdata)){
+                       translatedata(URLEncoder.encode(content),getoutputtype(inputdata,outputdata));
+                   }else{
+                       data.removeAllViews();
+                   }
+                    break;
+            }
+                return true;
+        }
+    };
+
     /**
      * 收藏
      */
 
    private String minputdata = "";
+   private boolean sctype = false;
     private void collectionDictionary(String inoutdata){
         if(minputdata.equals(inoutdata)){
-            return;
+
         }else{
             minputdata = inoutdata;
+            sctype = false;
         }
         Observable observable =
-                ApiUtils.getApi().collectionDictionary(BaseActivity.getLanguetype(mContext),BaseActivity.getuser().id+"",clickindex(Choice_text1.getText().toString().trim(),Choice_text1.getText().toString().trim()),inoutdata,mdata,"","0")
+                ApiUtils.getApi().collectionDictionary(BaseActivity.getLanguetype(mContext),BaseActivity.getuser().id+"",clickindex(Choice_text1.getText().toString().trim(),Choice_text1.getText().toString().trim()),inoutdata,mdata,"","0",sctype?1:0)
                         .compose(RxHelper.getObservaleTransformer())
                         .doOnSubscribe(new Consumer<Disposable>() {
                             @Override
@@ -472,7 +722,12 @@ public class InformationFragment extends BaseFragment {
             protected void _onNext(StatusCode<Object> stringStatusCode) {
                 new LogUntil(mContext,TAG+"zixunmessage",new Gson().toJson(stringStatusCode));
                 LoadingDialogUtils.closeDialog(mLoadingDialog);
-                shoucangimage.setImageResource(R.mipmap.shoucang2);
+                sctype = !sctype;
+                if(sctype) {
+                    shoucangimage.setImageResource(R.mipmap.shoucang2);
+                }else{
+                    shoucangimage.setImageResource(R.mipmap.shoucang_hui);
+                }
 
             }
 
@@ -503,4 +758,217 @@ public class InformationFragment extends BaseFragment {
     public void setdata(CollectionListbean mdata) {
         input_editet.setText(mdata.content);
     }
+
+    private UMShareListener shareListener = new UMShareListener() {
+        /**
+         * @param platform 平台类型
+         * @descrption 分享开始的回调
+         */
+        @Override
+        public void onStart(SHARE_MEDIA platform) {
+        }
+
+        @Override
+        public void onResult(SHARE_MEDIA share_media) {
+
+            ToastUtils.makeText("分享成功");
+        }
+
+        @Override
+        public void onError(SHARE_MEDIA share_media, Throwable throwable) {
+
+        }
+
+        @Override
+        public void onCancel(SHARE_MEDIA share_media) {
+
+        }
+    };
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        UMShareAPI.get(mContext).onActivityResult(requestCode,resultCode,data);
+
+    }
+
+    private void layoutContent(TextView textView, String content) {
+        if (!content.contains(" ")) {
+            textView.setText(content);
+            return;
+        }
+
+        SpannableStringBuilder builder = new SpannableStringBuilder(content);
+
+        int index = 0;
+//        Today's weather
+        String datam = content.trim().replace("'","")
+                .replace(" ","")
+                .replace("<","")
+                .replace(">","")
+                .replace("-","")
+                .replace(",","")
+                .replace("?","")
+                .replace("!","")
+                .replace(".","")
+                .replace("。","");
+
+        if(UIUtils.isEnglish((datam))) {
+            content = content.replace("'","")
+                    .replace("<","")
+                    .replace(">","")
+                    .replace("-","")
+                    .replace(",","")
+                    .replace("?","")
+                    .replace("!","")
+                    .replace(".","")
+                    .replace("。","");
+            if(content.indexOf(" ")>=0||content.indexOf(",")>=0){
+
+
+
+                String[] contentlist = null;
+                if(content.indexOf(" ")>=0){
+                    contentlist  = content.split(" ");
+                }
+//                for(int )
+
+                for (int i = 0; i < contentlist.length; i++) {
+                    int atIndex = content.indexOf(contentlist[i]);
+                    int sIndex = atIndex + contentlist[i].length();
+                    index = sIndex;
+                    new LogUntil(mContext, TAG, content.substring(atIndex, sIndex));
+                    if (sIndex < atIndex) { //格式不符合
+                        continue;
+                    }
+                    CustomClickableSpan clickableSpan = new CustomClickableSpan(mContext, atIndex, new TextonClickLister() {
+                        @Override
+                        public void clickText(String data) {
+                            new LogUntil(mContext, TAG, "点击单词：" + data);
+                            tanslatedata(data);
+                        }
+                    },sIndex);
+                    builder.setSpan(clickableSpan, atIndex, sIndex, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+                }
+            }else{
+                int atIndex = 0;
+                int sIndex = content.length();
+                index = sIndex;
+                new LogUntil(mContext, TAG, content.substring(atIndex, sIndex));
+                if (sIndex > atIndex) { //格式不符合
+
+                CustomClickableSpan clickableSpan = new CustomClickableSpan(mContext, atIndex, new TextonClickLister() {
+                    @Override
+                    public void clickText(String data) {
+                        new LogUntil(mContext, TAG, "点击单词：" + data);
+                        tanslatedata(data);
+                    }
+                },sIndex);
+                builder.setSpan(clickableSpan, atIndex, sIndex, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+
+                }
+            }
+        }
+
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
+        textView.setText(builder);
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void uodateuser( UpdateUserEvent uodate){
+        mConvenientBanner.setVisibility(View.GONE);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void totranslate(TranslateEvent event){
+        input_editet.setText(event.data);
+
+            Choice_text1.setText(choicedata[2]);
+            Choice_text2.setText(choicedata[1]);
+
+        String content = input_editet.getText().toString().trim();
+        try {
+            content = new String(content.getBytes(), "utf-8");
+        }catch (Exception e){
+
+        }
+        String inputdata = Choice_text1.getText().toString().trim();
+        String outputdata = Choice_text2.getText().toString().trim();
+        if(!TextUtils.isEmpty(content)&&!TextUtils.isEmpty(inputdata)&&!TextUtils.isEmpty(outputdata)){
+            if(history_linearlayout.getVisibility()==View.VISIBLE){
+                history_linearlayout.setVisibility(View.GONE);
+                translatedata.setVisibility(View.VISIBLE);
+            }
+            translatedata(URLEncoder.encode(content),getoutputtype(inputdata,outputdata));
+        }else{
+            data.removeAllViews();
+        }
+
+    }
+
+
+    private void getcollectionstats(String content){
+        Observable observable =
+                ApiUtils.getApi().getCollectionStatus(BaseActivity.getLanguetype(mContext),BaseActivity.getuser().id+"",content,0)
+                        .compose(RxHelper.getObservaleTransformer())
+                        .doOnSubscribe(new Consumer<Disposable>() {
+                            @Override
+                            public void accept(Disposable disposable) throws Exception {
+                                try {
+
+
+                                    if (mLoadingDialog == null) {
+                                        mLoadingDialog = LoadingDialogUtils.createLoadingDialog(mContext, "");
+                                    }
+                                    LoadingDialogUtils.show(mLoadingDialog);
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+                            }
+                        })
+                        .subscribeOn(AndroidSchedulers.mainThread());
+
+        HttpUtil.getInstance().toSubscribe(observable, new ProgressSubscriber<Integer>(mContext) {
+            @Override
+            protected void _onNext(StatusCode<Integer> stringStatusCode) {
+                new LogUntil(mContext,TAG+"zixunmessage",new Gson().toJson(stringStatusCode));
+                LoadingDialogUtils.closeDialog(mLoadingDialog);
+
+                if(stringStatusCode.getData()!=null&&stringStatusCode.getData()>=0){
+                    if(stringStatusCode.getData()==1){
+
+                        sctype = false;
+                        shoucangimage.setImageResource(R.mipmap.shoucang2);
+
+
+                    }else{
+                        sctype = false;
+                        shoucangimage.setImageResource(R.mipmap.shoucang_hui);
+                    }
+                }
+
+            }
+
+            @Override
+            protected void _onError(String message) {
+
+                ToastUtils.makeText(message);
+                LoadingDialogUtils.closeDialog(mLoadingDialog);
+
+            }
+        }, "", lifecycleSubject, false, true);
+    }
+
+    public void addhistorydata(InputHistoryBean data){
+        if(historylistdata.size()>0){
+            for(InputHistoryBean mdata:historylistdata){
+                if(mdata.inoutdata.equals(data.inoutdata)){
+                    historylistdata.remove(mdata);
+                }
+            }
+            historylistdata.add(0,data);
+        }else{
+            historylistdata.add(data);
+        }
+        PreferencesUtils.getInstance().putString(Contans.INPUT_HISTORY,new Gson().toJson(historylistdata));
+    }
+
 }

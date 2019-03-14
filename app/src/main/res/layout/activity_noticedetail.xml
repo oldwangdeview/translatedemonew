@@ -59,6 +59,7 @@
                 android:layout_height="match_parent"
                 android:minHeight="@dimen/dp_500"
                 android:textSize="@dimen/sp_14"
+                android:lineSpacingExtra="@dimen/dp_3"
                 android:textColor="@color/c_ff333333"
                 android:text=""/>
 
@@ -85,7 +86,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textSize="@dimen/sp_14"
-                    android:textColor="#6273f7"
+                    android:textColor="@color/c_999999"
                     android:layout_marginLeft="@dimen/dp_5"
                     android:text="1345"/>
                 <ImageView
@@ -99,7 +100,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/dp_5"
                     android:textSize="@dimen/sp_14"
-                    android:textColor="#6273f7"
+                    android:textColor="@color/c_999999"
                     android:text="234"/>
             </LinearLayout>
         </LinearLayout>

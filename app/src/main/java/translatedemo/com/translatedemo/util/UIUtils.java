@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,14 +37,26 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.xiaweizi.cornerslibrary.CornersProperty;
 import com.xiaweizi.cornerslibrary.RoundCornersTransformation;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -93,6 +106,20 @@ public class UIUtils {
 
 
 	public static String gettime(String time) {
+
+		Date date1=null;
+		SimpleDateFormat simdate1=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String str1="2015-1-25";
+		try {
+			date1=simdate1.parse(str1);
+			SimpleDateFormat simdate=new SimpleDateFormat("yyyy-MM-dd");
+			return simdate.format(date1);
+		} catch (ParseException e) {
+// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println(date1);
+
 
 		return time;
 
@@ -566,6 +593,7 @@ public class UIUtils {
 	 */
 	public static void openWebUrl(Context mContext,String url){
 
+		new LogUntil(mContext,"weburl__:",url);
 		Uri uri = Uri.parse(url);
 		Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 		mContext.startActivity(intent);
@@ -579,53 +607,6 @@ public class UIUtils {
 		return phone.substring(0,3)+"****"+phone.substring(phone.length()-4,phone.length());
 	}
 
-//	static PopupWindow popupWindow;
-//	public static void  showpresswindow(Context mcontent,View showview){
-//
-//             if(popupWindow==null){
-//
-//
-//			View popupView = View.inflate(mcontent, R.layout.popu_shared_presswindow, null);
-//			// 参数2,3：指明popupwindow的宽度和高度
-//			 popupWindow = new PopupWindow(popupView, WindowManager.LayoutParams.MATCH_PARENT,
-//					WindowManager.LayoutParams.MATCH_PARENT);
-//
-//			popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-//				@Override
-//				public void onDismiss() {
-//					popupWindow.dismiss();
-//				}
-//			});
-//
-//			// 设置背景图片， 必须设置，不然动画没作用
-//			popupWindow.setBackgroundDrawable(new BitmapDrawable());
-//			popupWindow.setFocusable(true);
-//
-//			// 设置点击popupwindow外屏幕其它地方消失
-//			popupWindow.setOutsideTouchable(true);
-//
-//			// 平移动画相对于手机屏幕的底部开始，X轴不变，Y轴从1变0
-//
-//				 popupView.findViewById(R.id.pop_presswindow_colose).setOnClickListener(new View.OnClickListener() {
-//					 @Override
-//					 public void onClick(View v) {
-//						 popupWindow.dismiss();
-//					 }
-//				 });
-//
-//
-//		}
-//
-//		// 在点击之后设置popupwindow的销毁
-//		if (popupWindow.isShowing()) {
-//			popupWindow.dismiss();
-//
-//		}
-//
-//		// 设置popupWindow的显示位置，此处是在手机屏幕底部且水平居中的位置
-//		popupWindow.showAtLocation(showview, Gravity.BOTTOM , 0, 0);
-//
-//	}
 
 	/***
 	 * 使用缓存获取图片流
@@ -692,6 +673,110 @@ public class UIUtils {
 			}
 		}
 		return data;
+	}
+
+	/**
+	 * 判定是否为英文
+	 * @param charaString
+	 * @return
+	 */
+
+	public static boolean isEnglish(String charaString){
+
+		return charaString.matches("^[a-zA-Z]*");
+
+	}
+
+
+	public static String gettime(double motn,Context mContext){
+		String year = "";
+	   if(motn>0){
+
+	     switch ((int)motn){
+			 case 12:
+			 	 year = mContext.getResources().getString(R.string.oneyear);
+			 	break;
+			 case 6:
+				 year = mContext.getResources().getString(R.string.byear);
+			 	break;
+			 case 3:
+				 year = mContext.getResources().getString(R.string.onejidu);
+			 	break;
+			 case 1:
+				 year = mContext.getResources().getString(R.string.onemonth);
+			 	break;
+		 }
+
+	    }
+
+		return year;
+	};
+
+
+	public static List<String> getFilesAllName(String path) {
+		File file=new File(path);
+		File[] files=file.listFiles();
+		if (files == null){
+			Log.e("error","空目录");
+			return null;}
+		List<String> s = new ArrayList<>();
+		for(int i =0;i<files.length;i++){
+			if(files[i].getAbsolutePath().endsWith(".json")) {
+				Log.e("path_info",files[i].getAbsolutePath());
+				s.add(files[i].getAbsolutePath());
+			}
+		}
+		return s;
+	}
+
+	public static String getJson(String fileName) {
+		StringBuilder stringBuilder = new StringBuilder();
+		try {
+			InputStream is = new FileInputStream(new File(fileName));
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
+			String line;
+			while ((line = bufferedReader.readLine()) != null) {
+				stringBuilder.append(line);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return stringBuilder.toString();
+
+	}
+
+	public static <T> ArrayList<T> jsonToArrayList(String json, Class<T> clazz) {
+		Type type = new TypeToken<ArrayList<JsonObject>>() {
+		}.getType();
+		ArrayList<JsonObject> jsonObjects = new Gson().fromJson(json, type);
+
+		ArrayList<T> arrayList = new ArrayList<>();
+		for (JsonObject jsonObject : jsonObjects) {
+			arrayList.add(new Gson().fromJson(jsonObject, clazz));
+		}
+		return arrayList;
+
+	}
+
+	public static String getAppVersionName(Context context) {
+		String versionName = "";
+		int versionCode = 0;
+		try {
+			// ---get the package info---
+			PackageManager pm = context.getPackageManager();
+			PackageInfo pi = pm.getPackageInfo(context.getPackageName(), 0);
+			versionName = pi.versionName;
+			versionCode = pi.versionCode;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		if (versionName == null || versionName.length() <= 0) {
+			versionName = "";
+		}
+
+		return versionName;
 	}
 
 

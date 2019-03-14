@@ -85,6 +85,10 @@
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
-
+    <style name="StartAppTheme" parent="AppTheme.Base">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@drawable/layout_list_start_pic</item>
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
 
 </resources>

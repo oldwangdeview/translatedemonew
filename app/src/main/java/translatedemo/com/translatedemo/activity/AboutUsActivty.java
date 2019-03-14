@@ -52,6 +52,8 @@ public class AboutUsActivty  extends BaseActivity {
     TextView content;
     @BindView(R.id.phone)
     TextView phone;
+    @BindView(R.id.version_name)
+    TextView version_name;
     private Dialog mLoadingDialog;
     @Override
     protected void initView() {
@@ -69,8 +71,9 @@ public class AboutUsActivty  extends BaseActivity {
     protected void initData() {
         super.initData();
         iv_back_activity_text.setVisibility(View.VISIBLE);
-        title_name.setText(this.getResources().getString(R.string.myuserinfo_text_titlename));
+        title_name.setText(this.getResources().getString(R.string.aboutus_text_titlename));
         getconfig(1);
+        version_name.setText("V "+UIUtils.getAppVersionName(AboutUsActivty.this));
 
     }
 
@@ -85,8 +88,8 @@ public class AboutUsActivty  extends BaseActivity {
               try {
 
 
-              Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse(mphone));
-                  mcontent.startActivity(intent);;
+                  Intent intent = new Intent(Intent.ACTION_CALL,Uri.parse("tel:"+mphone));
+                  startActivity(intent);
               }catch (Exception e){
 
               }
@@ -193,5 +196,10 @@ public class AboutUsActivty  extends BaseActivity {
     @OnClick({R.id.iv_back_activity_text,R.id.iv_back_activity_basepersoninfo})
     public void finishactivity(){
         finish();
+    }
+
+    @OnClick(R.id.useragreement)
+    public void gotouseragreement(){
+      UserAgreementActivity.statrtactivity(mcontent);
     }
 }

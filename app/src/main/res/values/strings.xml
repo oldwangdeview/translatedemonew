@@ -1,18 +1,19 @@
 <resources>
-    <string name="app_name">藏语翻译宝</string>
+    <string name="app_name">翻译通</string>
 
     <string name="help">帮助</string>
     <string name="string_help_text">当前应用缺少必要权限。\n\n请点击\"设置\"-\"权限\"-打开所需权限。\n\n最后点击两次后退按钮，即可返回。</string>
     <string name="quit">退出</string>
     <string name="exite_dialog">再按一次退出程序！</string>
     <string name="settings">设置</string>
-    <string name="choice_language_title">选择语言</string>
+    <string name="choice_language_title">请选择习惯语言</string>
     <string name="tackphoto">拍照</string>
     <string name="imagelist">本地相册</string>
     <string name="dialog_message">是否退出登录？</string>
+    <string name="getcode_code_startcode">S后重新获取</string>
 
     <string name="choice_language_choicetext">请选择习惯语言</string>
-    <string name="choice_language_choicebottom_text">© 藏语翻译宝</string>
+    <string name="choice_language_choicebottom_text">© 翻译通</string>
     <string name="returntext">返回</string>
     <string name="update_seccese">修改成功</string>
     <!--网络-->
@@ -29,7 +30,7 @@
 
     <!--登录-->
     <string name="login_text_titlename">登录</string>
-    <string name="login_title">欢迎使用藏汉翻译宝</string>
+    <string name="login_title">欢迎使用翻译通</string>
     <string name="login_hint_phone">请输入手机号</string>
     <string name="login_hint_code">请输入验证码</string>
     <string name="login_but_getcode">获取验证码</string>
@@ -55,12 +56,24 @@
     <string name="translate_text_zangwen">藏语</string>
     <string name="translate_text_zanghan">藏汉</string>
     <string name="translate_text_translate">在此输入您要查询的单词</string>
+    <string name="translate_text_translate1">在此输入你要翻译的句子</string>
     <string name="translate_text_netmessage">网络释义</string>
     <string-array name="translate_choiceimage">
         <item>藏语</item>
         <item>汉语</item>
         <item>英语</item>
-        <item>梵语</item>
+        <item>繁体中文</item>
+        <item>德文</item>
+        <item>法文</item>
+        <item>西班牙文</item>
+        <item>葡萄牙文</item>
+        <item>意大利文</item>
+        <item>俄文</item>
+        <item>日文</item>
+        <item>印尼文</item>
+        <item>马来文</item>
+        <item>维吾尔文</item>
+
     </string-array>
 
     <!--个人中心-->
@@ -75,6 +88,7 @@
     <string name="userinfo_text_seting">设置</string>
     <string name="userinfo_text_noadd">未添加</string>
     <string name="userinfo_text_nobading">未绑定</string>
+    <string name="userinfo_text_bading">已绑定</string>
 
     <!--翻译界面-->
     <string name="translate_text_quxiao">取消</string>
@@ -112,7 +126,7 @@
     <string name="membercenter_text_month">月</string>
     <string name="membercenter_text_vipmessage">会员权益：这是一段会员权益的介绍，这是一段会员权益的介绍，这是一段会员权益的介绍，这是一段会员权益的介绍，这是一段会员权益的介绍，这是一段会员权益的介绍。</string>
     <string name="membercenter_text_vipzx">会员专享</string>
-    <string name="membercenter_text_vipcenter">藏语宝会员中心</string>
+    <string name="membercenter_text_vipcenter">翻译通会员中心</string>
     <string name="membercenter_text_hzcd">新华汉藏词典</string>
     <string name="membercenter_text_njcd">牛津藏英词典</string>
     <string name="membercenter_text_xlcd">小林藏梵词典</string>
@@ -175,7 +189,7 @@
     <string name="aboutus_text_content">藏语翻译宝是为满足日益广泛的藏语和其他语言的沟通需求，开发的一款可进行藏汉、藏英、藏梵等的翻译APP，深受广大藏族同胞、各国藏语爱好者、入藏旅游人士的欢迎。</string>
     <string name="aboutus_text_phone">咨询电话：</string>
     <string name="aboutus_text_email">联系邮箱：</string>
-    <string name="aboutus_text_messageinfo">版权所有 © 藏语翻译宝</string>
+    <string name="aboutus_text_messageinfo">版权所有 © 翻译通</string>
     <string name="aboutus_text_xieyi">《用户使用服务协议》</string>
 
     <!--更换手机-->
@@ -202,4 +216,44 @@
 您可以通过下面的联系方式联系到我们</string>
 
 
+    <!--订单支付-->
+    <string name="order_text_titlename">订单支付</string>
+    <string name="order_text_ord_number">订单编号</string>
+    <string name="order_text_ordertype">订购类型</string>
+    <string name="order_text_ordermoney">价格</string>
+    <string name="order_text_yhq">优惠券</string>
+    <string name="order_text_xzyhq">选择优惠券</string>
+    <string name="order_text_ddmoney">订单金额</string>
+    <string name="order_text_paytype">支付方式</string>
+
+    <string name="order_text_payfor">立即支付</string>
+
+    <string name="order_text_wechartpay">微信支付</string>
+    <string name="order_text_alipay">支付宝支付</string>
+
+
+
+    <string name="share_text_content">最好用的藏语翻译助手包含藏语 对汉语、英语、梵语等语言的翻译，可有效帮助您在藏语言环境下的沟通，架起文化沟通的桥梁。</string>
+
+    <string name="cidian_niujin">牛津词典</string>
+    <string name="cidian_weishi">韦氏词典</string>
+
+
+
+    <string name="oneyear">一  年</string>
+    <string name="byear">180天</string>
+    <string name="onejidu">90 天</string>
+    <string name="onemonth">30 天</string>
+    <string name="keshen">可省</string>
+
+    <!--跨软件翻译-->
+    <string name="strideo_text_titlename">跨软件翻译</string>
+    <string name="strideo_text_typename">启用跨软件查词</string>
+    <string name="strideo_text_content">开启跨软件翻译功能后，在其他软件复制文字时，可以快速查看释义，无需切换APP</string>
+
+
+    <string name="strideo_wb_type">英文 -> 中文</string>
+    <string name="strideo_wb_yuanwenfay">原文翻译</string>
+
+    <string name="translatejz_text_ts">由厦门大学人工智能实验室提供技术支持</string>
 </resources>

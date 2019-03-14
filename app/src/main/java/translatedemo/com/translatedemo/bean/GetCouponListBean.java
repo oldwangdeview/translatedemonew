@@ -9,8 +9,8 @@ import java.io.Serializable;
 public class GetCouponListBean implements Serializable{
                public int  id;
                public String name;
-               public int fullPrice;
-               public int reducePrice;
+               public double fullPrice;
+               public double reducePrice;
                public int overdue;
                public String  beginTime;
                public String endTime;
@@ -19,5 +19,5 @@ public class GetCouponListBean implements Serializable{
                public int type;
                public int day;
                public int isReceive;
-               public int couponId;
+               public double couponId;
 }

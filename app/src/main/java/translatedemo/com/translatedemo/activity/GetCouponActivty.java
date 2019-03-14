@@ -28,6 +28,7 @@ import translatedemo.com.translatedemo.bean.GetCouponListBean;
 import translatedemo.com.translatedemo.bean.InformationBean;
 import translatedemo.com.translatedemo.bean.StatusCode;
 import translatedemo.com.translatedemo.contans.Contans;
+import translatedemo.com.translatedemo.eventbus.UpdateCouPonEvent;
 import translatedemo.com.translatedemo.eventbus.UpdateCuponEvent;
 import translatedemo.com.translatedemo.http.HttpUtil;
 import translatedemo.com.translatedemo.http.ProgressSubscriber;
@@ -138,6 +139,7 @@ public class GetCouponActivty  extends BaseActivity {
             public void onclick(View v, int position) {
                 if(listdata.get(position).isReceive==0){
                     getcoupon(listdata.get(position).id+"");
+                    EventBus.getDefault().post(new UpdateCouPonEvent());
                 }else{
                     ToastUtils.makeText(GetCouponActivty.this.getResources().getString(R.string.getcoupon_text_getover));
                 }

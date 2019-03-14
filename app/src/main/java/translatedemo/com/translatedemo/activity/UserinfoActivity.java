@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -130,6 +131,7 @@ public class UserinfoActivity extends BaseActivity{
         super.initData();
         iv_back_activity_text.setVisibility(View.VISIBLE);
         title_name.setText(this.getResources().getString(R.string.myuserinfo_text_titlename));
+
         if(mDucationadpater==null){
             mDucationadpater = new DucationAdpater(UserinfoActivity.this,mducatlistdata);
             mDucationadpater.setOnclickItemLister(new ListOnclickLister() {
@@ -143,6 +145,7 @@ public class UserinfoActivity extends BaseActivity{
                 }
             });
         }
+        nickname_editext.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16)});
         updatedata();
         getDucation();
     }
@@ -239,20 +242,23 @@ public class UserinfoActivity extends BaseActivity{
             switch (requestCode) {
                 case  Contans.CAMERA_REQUEST_CODE:
                     //相机
-                    FileUtils.deleteFile(headimagepath);
+                    FileUtils.deleteFile(FileUtils.IMAGE_DIR+ "/crop_photo.jpg");
                     cropImageUri = Uri.fromFile(fileCropUri);
                     PhotoUtils.cropImageUri(this, imageUri, cropImageUri, 1, 1, OUTPUT_X, OUTPUT_Y, Contans.CODE_RESULT_REQUEST);
-
                     break;
                 case Contans.GALLERY_REQUEST_CODE:
+                    if(!new File(headimagepath).exists()){
+                        new File(headimagepath).delete();
+                    }
                     //相册
+                    //相机
+                    FileUtils.deleteFile(FileUtils.IMAGE_DIR+ "/crop_photo.jpg");
                     cropImageUri = Uri.fromFile(fileCropUri);
                     Uri newUri = Uri.parse(PhotoUtils.getPath(this, data.getData()));
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         newUri = FileProvider.getUriForFile(this, "translatedemo.com.translatedemo", new File(newUri.getPath()));
                     }
                     PhotoUtils.cropImageUri(this, newUri, cropImageUri, 1, 1, OUTPUT_X, OUTPUT_Y, Contans.CODE_RESULT_REQUEST);
-
 
                     break;
 
@@ -280,31 +286,67 @@ public class UserinfoActivity extends BaseActivity{
 
 
 
-        uplodeuserinf0(nickname,age,headimagepath);
+        uplodeuserinf0(nickname,age,FileUtils.IMAGE_DIR+ "/crop_photo.jpg");
     }
 
 
     public void uplodeuserinf0(String nickname,String age,String headimagepath){
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/octet-stream"), new File(headimagepath));
-        MultipartBody.Part body = MultipartBody.Part.createFormData("image", new File(headimagepath).getName(), requestBody);
 
+        MultipartBody.Part body =null;
+        Observable observable = null;
 
-        Observable observable =
-                ApiUtils.getApi().editUserInfo(BaseActivity.getuser().id,nickname,sextype>0?sextype:3,age,mDucationid>0?mDucationid+"":0+"",BaseActivity.getLanguetype(this),body)
-                        .compose(RxHelper.getObservaleTransformer())
-                        .subscribeOn(Schedulers.io())
-                        .doOnSubscribe(new Consumer<Disposable>() {
-                            @Override
-                            public void accept(Disposable disposable) throws Exception {
-                                if (mLoadingDialog == null) {
-                                    mLoadingDialog = LoadingDialogUtils.createLoadingDialog(UserinfoActivity.this, "正在修改");
+        new LogUntil(mcontent,TAG,headimagepath);
+        if(new File(headimagepath).exists()){
+            RequestBody requestBody = RequestBody.create(MediaType.parse("application/octet-stream"), new File(headimagepath));
+            body = MultipartBody.Part.createFormData("image", new File(headimagepath).getName(), requestBody);
+        }
+
+        if(body!=null) {
+            observable =
+                    ApiUtils.getApi().editUserInfo(
+                            BaseActivity.getuser().id,
+                            nickname,
+                            sextype > 0 ? sextype : 3, age, mDucationid > 0 ? mDucationid + "" : 0 + "",
+                            BaseActivity.getLanguetype(this),
+                            body)
+                            .compose(RxHelper.getObservaleTransformer())
+                            .subscribeOn(Schedulers.io())
+                            .doOnSubscribe(new Consumer<Disposable>() {
+                                @Override
+                                public void accept(Disposable disposable) throws Exception {
+                                    if (mLoadingDialog == null) {
+                                        mLoadingDialog = LoadingDialogUtils.createLoadingDialog(UserinfoActivity.this, "正在修改");
+                                    }
+                                    LoadingDialogUtils.show(mLoadingDialog);
                                 }
-                                LoadingDialogUtils.show(mLoadingDialog);
-                            }
-                        })
-                        .subscribeOn(AndroidSchedulers.mainThread())
-                        ;
+                            })
+                            .subscribeOn(AndroidSchedulers.mainThread())
+            ;
 
+        }else{
+
+            observable =
+                    ApiUtils.getApi().editUserInfo(
+                            BaseActivity.getuser().id,
+                            nickname,
+                            sextype > 0 ? sextype : 3, age, mDucationid > 0 ? mDucationid + "" : 0 + "",
+                            BaseActivity.getLanguetype(this))
+                            .compose(RxHelper.getObservaleTransformer())
+                            .subscribeOn(Schedulers.io())
+                            .doOnSubscribe(new Consumer<Disposable>() {
+                                @Override
+                                public void accept(Disposable disposable) throws Exception {
+                                    if (mLoadingDialog == null) {
+                                        mLoadingDialog = LoadingDialogUtils.createLoadingDialog(UserinfoActivity.this, "正在修改");
+                                    }
+                                    LoadingDialogUtils.show(mLoadingDialog);
+                                }
+                            })
+                            .subscribeOn(AndroidSchedulers.mainThread())
+            ;
+
+
+        }
 
         HttpUtil.getInstance().toSubscribe(observable, new ProgressSubscriber<LoginBean>(UserinfoActivity.this) {
             @Override
@@ -384,7 +426,7 @@ public class UserinfoActivity extends BaseActivity{
      */
     private void getDucation(){
         Observable observable =
-                ApiUtils.getApi().getDucation()
+                ApiUtils.getApi().getDucation(BaseActivity.getLanguetype(UserinfoActivity.this))
                         .compose(RxHelper.getObservaleTransformer())
                         .doOnSubscribe(new Consumer<Disposable>() {
                             @Override
@@ -434,5 +476,12 @@ public class UserinfoActivity extends BaseActivity{
     @OnClick({R.id.iv_back_activity_text,R.id.iv_back_activity_basepersoninfo})
     public void finishactivity(){
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //相机
+        FileUtils.deleteFile(FileUtils.IMAGE_DIR+ "/crop_photo.jpg");
     }
 }

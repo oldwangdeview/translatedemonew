@@ -21,5 +21,5 @@ public class CollectionListbean implements Serializable {
     public int type;
     public String translateContent;
     public String createTime;
-    public int isword;
+    public int isWord;
 }

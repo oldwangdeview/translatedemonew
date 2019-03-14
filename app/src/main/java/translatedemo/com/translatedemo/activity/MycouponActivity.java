@@ -6,6 +6,8 @@ import android.support.design.widget.TabLayout;
 import android.view.View;
 import android.widget.TextView;
 
+import org.greenrobot.eventbus.EventBus;
+
 import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -50,6 +52,7 @@ public class MycouponActivity extends BaseActivity {
     @Override
     protected void initData() {
         super.initData();
+
         iv_back_activity_text.setVisibility(View.VISIBLE);
         tv_small_title_layout_head.setVisibility(View.VISIBLE);
         tv_small_title_layout_head.setTextColor(this.getResources().getColor(R.color.c_e94950));

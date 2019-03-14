@@ -70,9 +70,16 @@ public class GetCouponAdpater extends BaseRecycleAdapter<GetCouponListBean> {
             text = text.replace("%",s.fullPrice+"");
             tj.setText(text);
         }
-        if(!TextUtils.isEmpty(s.endTime)){
-            rq.setText(UIUtils.gettime(s.endTime));
+        if(s.type==0) {
+            if (!TextUtils.isEmpty(s.endTime)) {
+                rq.setText(UIUtils.gettime(mContext.getResources().getString(R.string.getcoupon_text_rq)+s.endTime));
+            }
+        }else{
+                rq.setText(s.day+" 天后过期");
+
         }
+
+
 
 
         holder.getItemView(R.id.btn)

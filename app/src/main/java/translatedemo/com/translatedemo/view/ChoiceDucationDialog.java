@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -103,7 +104,7 @@ public class ChoiceDucationDialog extends Dialog {
             window.setAttributes(lp);
             window.setGravity(Gravity.BOTTOM);
             View view = LayoutInflater.from(p.context).inflate(R.layout.dialog_bottom_menu1, null);
-            MyGridView gridview = view.findViewById(R.id.mygridview);
+            GridView gridview = view.findViewById(R.id.mygridview);
             TextView btnCancel = (TextView) view.findViewById(R.id.btn_cancel);
 //            LinearLayout layContainer = (LinearLayout) view.findViewById(R.id.lay_container);
             ViewGroup.LayoutParams lpItem = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

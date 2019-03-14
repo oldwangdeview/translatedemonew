@@ -28,6 +28,7 @@
             android:layout_marginTop="@dimen/dp_30"/>
 
         <LinearLayout
+            android:id="@+id/open_qq"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_54"
             android:layout_marginRight="@dimen/dp_38"
@@ -59,6 +60,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/open_wechart"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_54"
             android:layout_marginRight="@dimen/dp_38"
@@ -83,6 +85,11 @@
                 android:textSize="@dimen/sp_14"
                 android:textColor="@color/c_999999"
                 />
+
+            <ImageView
+                android:layout_width="@dimen/dp_8"
+                android:layout_height="@dimen/dp_13"
+                android:src="@mipmap/jiantou2"/>
         </LinearLayout>
     </LinearLayout>
 

@@ -25,10 +25,16 @@
                 android:orientation="horizontal"
                 android:gravity="center"
                 android:paddingLeft="20dp"
-                android:paddingRight="20dp"
                 android:background="@drawable/fragment_translate_titleback">
 
+                <LinearLayout
+                    android:id="@+id/choice_lan_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="horizontal">
                 <TextView
+                    android:id="@+id/choice_fytype"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/translate_text_zanghan"
@@ -40,6 +46,7 @@
                     android:layout_height="wrap_content"
                     android:src="@mipmap/jiantou"
                     android:layout_marginLeft="10dp"/>
+                </LinearLayout>
 
                 <View
                     android:layout_width="@dimen/dp_1"
@@ -49,7 +56,7 @@
                 <EditText
                     android:id="@+id/myhome_line_top_1"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:background="@null"
                     android:layout_marginLeft="@dimen/dp_20"
                     android:hint="@string/translate_text_translate"
@@ -67,12 +74,14 @@
 
         </LinearLayout>
     <RelativeLayout
+        android:id="@+id/banner_relativelayout"
         android:layout_width="match_parent"
         android:background="@drawable/fragment_translateback"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
+        android:visibility="visible"
         android:paddingTop="@dimen/dp_15"
-        android:layout_height="@dimen/dp_120">
+        android:layout_height="@dimen/dp_135">
 
         <com.bigkoo.convenientbanner.ConvenientBanner
             android:id="@+id/id_cb"

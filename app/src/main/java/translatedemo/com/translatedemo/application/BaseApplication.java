@@ -5,6 +5,15 @@ import android.os.Handler;
 
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.socialize.PlatformConfig;
+import com.umeng.socialize.UMShareConfig;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
+import translatedemo.com.translatedemo.contans.Contans;
+import translatedemo.com.translatedemo.recever.ListenClipboardService;
+import translatedemo.com.translatedemo.util.PreferencesUtils;
 
 
 /**
@@ -27,6 +36,7 @@ public class BaseApplication extends AbsSuperApplication {
     public static boolean isShowLog = true ;//是否显示log
 
 
+
 //    public static RefWatcher getRefWatcher(Context context) {
 //        BaseApplication application = (BaseApplication) context.getApplicationContext();
 //        return application.mRefWatcher;
@@ -41,21 +51,23 @@ public class BaseApplication extends AbsSuperApplication {
             return;
         }
         mRefWatcher = LeakCanary.install(this);*/
-
+        closeAndroidPDialog();
         // 1.上下文
 //        com.darsom.aar.App.Companion.setInstance(this);
         mContext = getApplicationContext();
-        UMConfigure.setLogEnabled(false);
+        UMConfigure.setLogEnabled(true);
         UMConfigure.init(this," 5b860801f29d98114f000096","umeng",UMConfigure.DEVICE_TYPE_PHONE,"");
-        PlatformConfig.setWeixin("wx27e3eaa81e693b4c", "3baf1193c85774b3fd9d18447d76cab0");
-        PlatformConfig.setQQZone("1106873222", "6s9Kib0ZDNASHeVY");
+        PlatformConfig.setWeixin("wxcf83e4f906c7ecf8", "1b21dbcd56704a4d509eaa88582a921c");
+        PlatformConfig.setQQZone("101553730", "f8b8319b7a7727398787a7d77c6d56fe");
+        UMShareConfig config = new UMShareConfig();
+        config.isNeedAuthOnGetUserInfo(true);
         // 2.创建一个handler
         mHandler = new Handler();
         // 3.得到一个主线程id
         mMainThreadId = android.os.Process.myTid();
         // 4.得到主线程
         mMainThread = Thread.currentThread();
-
+//        ListenClipboardService.start(this );
         CrashHandler crashHandler = CrashHandler.getInstance();
         crashHandler.init(getApplicationContext());
 
@@ -72,6 +84,29 @@ public class BaseApplication extends AbsSuperApplication {
     protected String getAppNameFromSub() {
         return null;
     }
+
+    private void closeAndroidPDialog(){
+        try {
+            Class aClass = Class.forName("android.content.pm.PackageParser$Package");
+            Constructor declaredConstructor = aClass.getDeclaredConstructor(String.class);
+            declaredConstructor.setAccessible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            Class cls = Class.forName("android.app.ActivityThread");
+            Method declaredMethod = cls.getDeclaredMethod("currentActivityThread");
+            declaredMethod.setAccessible(true);
+            Object activityThread = declaredMethod.invoke(null);
+            Field mHiddenApiWarningShown = cls.getDeclaredField("mHiddenApiWarningShown");
+            mHiddenApiWarningShown.setAccessible(true);
+            mHiddenApiWarningShown.setBoolean(activityThread, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
 //    /**
 //     * 获取toke

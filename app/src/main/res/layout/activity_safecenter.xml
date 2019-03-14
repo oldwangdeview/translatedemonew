@@ -43,17 +43,15 @@
             android:layout_gravity="center_vertical"/>
 
     </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_1"
-        android:layout_marginLeft="@dimen/dp_15"
-        android:background="@color/c_e5e5e5"/>
+
     <!--绑定QQ-->
     <LinearLayout
 
+        android:id="@+id/bandingqq"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_54"
         android:orientation="horizontal"
+        android:layout_marginTop="@dimen/dp_1"
         android:paddingRight="@dimen/dp_15"
         android:background="@color/c_ffffff"
         android:paddingLeft="@dimen/dp_15"
@@ -85,17 +83,15 @@
             android:layout_gravity="center_vertical"/>
 
     </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_1"
-        android:layout_marginLeft="@dimen/dp_15"
-        android:background="@color/c_e5e5e5"/>
+
     <!--绑定微信-->
     <LinearLayout
 
+        android:id="@+id/bangdingwechartlin"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_54"
         android:orientation="horizontal"
+        android:layout_marginTop="@dimen/dp_1"
         android:paddingRight="@dimen/dp_15"
         android:background="@color/c_ffffff"
         android:paddingLeft="@dimen/dp_15"

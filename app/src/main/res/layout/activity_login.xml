@@ -34,7 +34,7 @@
                     android:padding="@dimen/dp_10"
                     android:inputType="number"
                     android:textColor="@color/c_383838"
-                    android:textColorHint="@color/c_ff565656"
+                    android:textColorHint="@color/c_a6a6a6"
                     android:textSize="@dimen/sp_12"
                     android:background="@drawable/login_input_back"/>
 
@@ -56,9 +56,10 @@
                         android:layout_weight="1"
                         android:background="@null"
                         android:hint="@string/login_hint_code"
-                        android:textSize="@dimen/sp_14"
+                        android:textSize="@dimen/sp_12"
+
                         android:textColor="@color/c_383838"
-                        android:textColorHint="@color/c_ff565656"/>
+                        android:textColorHint="@color/c_a6a6a6"/>
 
 
                     <TextView
@@ -84,8 +85,8 @@
                     android:gravity="center"
                     android:layout_gravity="center_horizontal"
                     android:textColor="@color/c_ffffff"
-                    android:layout_marginLeft="@dimen/dp_5"
-                    android:layout_marginRight="@dimen/dp_5"
+                    android:layout_marginLeft="@dimen/dp_15"
+                    android:layout_marginRight="@dimen/dp_15"
                     android:textSize="@dimen/sp_18"
                     android:text="@string/login_but_login"/>
 

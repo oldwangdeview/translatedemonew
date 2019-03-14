@@ -14,4 +14,6 @@ public class TranslateBean implements Serializable {
     public String dictionaryName;
     public String image;
     public String translateResult;
+    public String contentOne;
+    public String contentTwo;
 }

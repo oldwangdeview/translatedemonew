@@ -8,6 +8,10 @@ import android.view.View;
 
 import com.google.gson.Gson;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +27,7 @@ import translatedemo.com.translatedemo.base.BaseFragment;
 import translatedemo.com.translatedemo.bean.GetCouponListBean;
 import translatedemo.com.translatedemo.bean.StatusCode;
 import translatedemo.com.translatedemo.contans.Contans;
+import translatedemo.com.translatedemo.eventbus.UpdateCouPonEvent;
 import translatedemo.com.translatedemo.http.HttpUtil;
 import translatedemo.com.translatedemo.http.ProgressSubscriber;
 import translatedemo.com.translatedemo.http.RxHelper;
@@ -44,7 +49,7 @@ public class CouponFragment3  extends BaseFragment {
     YRecycleview yrecycleview_;
     private LoadingPagerHead mLoadingPagerHead;
     private Dialog mLoadingDialog;
-    public static final int mType = 3;
+    public static final int mType = 2;
     private List<GetCouponListBean> listdata = new ArrayList<>();
     private MyCuponAdpater madpater;
     @Override
@@ -72,6 +77,7 @@ public class CouponFragment3  extends BaseFragment {
     @Override
     protected void initData() {
         super.initData();
+        EventBus.getDefault().register(this);
         madpater = new MyCuponAdpater(mContext,listdata,mType);
         yrecycleview_.setLayoutManager(new LinearLayoutManager(mContext));
         yrecycleview_.setItemAnimator(new DefaultItemAnimator());
@@ -138,5 +144,15 @@ public class CouponFragment3  extends BaseFragment {
                 mLoadingPagerHead.showPagerView(Contans.STATE_ERROR);
             }
         }, "", lifecycleSubject, false, true);
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updatedata(UpdateCouPonEvent event){
+        retry();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }

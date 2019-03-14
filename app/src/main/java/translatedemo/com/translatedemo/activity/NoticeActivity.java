@@ -80,7 +80,7 @@ public class NoticeActivity extends BaseActivity {
             }
         };
 
-        setContentView(mLoadingPagerHead);
+        setContentView( R.layout.activty_notice);
     }
 
 

@@ -14,6 +14,6 @@ public class MemberListBean implements Serializable{
 
     public int id;
     public String explain;
-    public int amount;
-    public int month;
+    public double amount;
+    public double month;
 }

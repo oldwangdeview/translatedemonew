@@ -80,7 +80,7 @@ public class MyCollectionActivity  extends BaseActivity {
 
             }
         };
-        setContentView(mLoadingPagerHead);
+        setContentView(R.layout.activity_mycollection);
     }
 
     @Override
@@ -88,6 +88,23 @@ public class MyCollectionActivity  extends BaseActivity {
         super.onResume();
         UIUtils.showFullScreen(MyCollectionActivity.this,false);
         updateactionbar();
+    }
+
+    @Override
+    protected void initEvent() {
+        super.initEvent();
+        yrecycleview_.setRefreshAndLoadMoreListener(new YRecycleview.OnRefreshAndLoadMoreListener() {
+            @Override
+            public void onRefresh() {
+                yrecycleview_.setReFreshComplete();
+            }
+
+            @Override
+            public void onLoadMore() {
+
+                yrecycleview_.setloadMoreComplete();
+            }
+        });
     }
 
     @Override
@@ -104,7 +121,7 @@ public class MyCollectionActivity  extends BaseActivity {
             @Override
             public void onclick(View v, int position) {
                 EventBus.getDefault().post(listdata.get(position));
-                if(0==listdata.get(position).isword){
+                if(0==listdata.get(position).isWord){
                     EventBus.getDefault().post(new UpdateMainIndex(1));
                 }else{
                     EventBus.getDefault().post(new UpdateMainIndex(3));

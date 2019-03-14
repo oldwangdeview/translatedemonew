@@ -3,14 +3,10 @@ package translatedemo.com.translatedemo.activity;
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-import translatedemo.com.translatedemo.R;
 import translatedemo.com.translatedemo.base.BaseActivity;
 import translatedemo.com.translatedemo.contans.Contans;
 import translatedemo.com.translatedemo.util.CheckPermission;
@@ -20,7 +16,7 @@ import translatedemo.com.translatedemo.util.UIUtils;
  * Created by Administrator on 2018/12/25 0025.
  */
 
-public class FalshActivity  extends AppCompatActivity{
+public class FalshActivity  extends BaseActivity{
 
     static final String[] PERMISSION = new String[]{
             Manifest.permission.WRITE_EXTERNAL_STORAGE,// 写入权限
@@ -33,15 +29,49 @@ public class FalshActivity  extends AppCompatActivity{
             Manifest.permission.CALL_PHONE
 
     };
-//    @Override
-//    protected void initView() {
-//
-//    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         UIUtils.showFullScreen(FalshActivity.this,true);
+
+
+        new Thread(){
+            @Override
+            public void run() {
+                super.run();
+                try {
+                    Thread.sleep(1000);
+                   Message msg  = new Message();
+                   msg.arg1 =1;
+                   mhander.sendMessage(msg);
+                }catch (Exception e){
+
+                }
+            }
+        }.start();
+
+
+
+    }
+
+    @Override
+    protected void initView() {
+
+    }
+
+    Handler mhander = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if(msg.arg1==1){
+                intdata();
+            }
+        }
+    };
+
+    private void intdata(){
+
         if (!UIUtils.isMarshmallow()) {
             ChoiceLanguageActivity.startactivity(FalshActivity.this);
             finish();
@@ -56,15 +86,7 @@ public class FalshActivity  extends AppCompatActivity{
                 finish();
             }
         }
-
     }
-//
-//    @Override
-//    protected void initData() {
-//        super.initData();
-//
-//
-//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

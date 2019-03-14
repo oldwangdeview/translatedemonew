@@ -3,6 +3,8 @@ package translatedemo.com.translatedemo.activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
@@ -51,6 +53,12 @@ public class ReplacePhoneActivity  extends BaseActivity {
     @BindView(R.id.code)
     EditText code;
 
+    @BindView(R.id.login_text_getcode)
+    TextView bindphone_text_getcode;
+    public int MAX_TIME = 60;
+    public boolean Thread_start = true;
+    public boolean GET_CODE = true ;
+
     private Dialog mLoadingDialog;
 
     @Override
@@ -63,8 +71,16 @@ public class ReplacePhoneActivity  extends BaseActivity {
 
     }
 
-    @OnClick(R.id.getcode)
+    @OnClick(R.id.login_text_getcode)
     public void getcode(){
+        String oldphone_t =oldphone.getText().toString().trim();
+        if(TextUtils.isEmpty(oldphone_t)){
+            ToastUtils.makeText(getResources().getString(R.string.login_error_notphonenumber));
+            return;
+        }
+        if(GET_CODE) {
+            getcode(oldphone_t);
+        }
 
     }
     @OnClick(R.id.uplode)
@@ -146,6 +162,97 @@ public class ReplacePhoneActivity  extends BaseActivity {
 
 
 
+    private void getcode(String phone){
+        Observable observable =
+                ApiUtils.getApi().getCode(phone)
+                        .compose(RxHelper.getObservaleTransformer())
+                        .doOnSubscribe(new Consumer<Disposable>() {
+                            @Override
+                            public void accept(Disposable disposable) throws Exception {
+                                if (mLoadingDialog == null) {
+                                    mLoadingDialog = LoadingDialogUtils.createLoadingDialog(ReplacePhoneActivity.this, "");
+                                }
+                                LoadingDialogUtils.show(mLoadingDialog);
+                            }
+                        })
+                        .subscribeOn(AndroidSchedulers.mainThread());
+
+        HttpUtil.getInstance().toSubscribe(observable, new ProgressSubscriber<Object>(ReplacePhoneActivity.this) {
+            @Override
+            protected void _onNext(StatusCode<Object> stringStatusCode) {
+                new LogUntil(mcontent,TAG,new Gson().toJson(stringStatusCode));
+                GET_CODE = false;
+                LoadingDialogUtils.closeDialog(mLoadingDialog);
+                timeer();
+            }
+            @Override
+            protected void _onError(String message) {
+                ToastUtils.makeText(message);
+                LoadingDialogUtils.closeDialog(mLoadingDialog);
+            }
+        }, "", lifecycleSubject, false, true);
+
+
+    }
+    private void timeer(){
+        new Thread(){
+            @Override
+            public void run() {
+                super.run();
+                if(Thread_start&&!GET_CODE){
+
+                    try {
+                        for (; MAX_TIME > 0; MAX_TIME--) {
+
+                            Thread.sleep(1000);
+                            Message msg = new Message();
+                            msg.arg1 = MAX_TIME;
+                            mhandler.sendMessage(msg);
+
+
+                        }
+                    }catch (Exception e){
+
+                    }
+
+                }
+
+            }
+        }.start();
+
+
+    }
+
+    Handler mhandler= new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            try {
+                if (msg.arg1 > 1) {
+
+
+
+                    bindphone_text_getcode.setText(msg.arg1+getResources().getString(R.string.getcode_code_startcode));
+                    bindphone_text_getcode.setTextColor(getResources().getColor(R.color.c_666666));
+
+                } else {
+                    GET_CODE = true;
+                    MAX_TIME = 60;
+                    bindphone_text_getcode.setText(getResources().getString(R.string.login_but_getcode));
+                    bindphone_text_getcode.setTextColor(getResources().getColor(R.color.c_e94950));
+
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Thread_start =false;
+    }
 
     @Override
     protected void initData() {

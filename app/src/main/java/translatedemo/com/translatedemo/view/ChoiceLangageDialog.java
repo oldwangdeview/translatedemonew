@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -40,7 +42,7 @@ public class ChoiceLangageDialog extends Dialog {
         private boolean canCancel = true;
         private boolean shadow = true;
         private final ChoiceLangageDialog.Params p;
-        private ChoiceLangvageAdpater madpater ;
+        private BaseAdapter madpater ;
         public Builder(Context context) {
             p = new ChoiceLangageDialog.Params();
             p.context = context;
@@ -51,7 +53,7 @@ public class ChoiceLangageDialog extends Dialog {
             return this;
         }
 
-        public ChoiceLangageDialog.Builder setCanCancel(ChoiceLangvageAdpater madpater){
+        public ChoiceLangageDialog.Builder setCanCancel(BaseAdapter madpater){
             this.madpater = madpater;
             return this;
         }
@@ -103,7 +105,7 @@ public class ChoiceLangageDialog extends Dialog {
             window.setAttributes(lp);
             window.setGravity(Gravity.BOTTOM);
             View view = LayoutInflater.from(p.context).inflate(R.layout.dialog_bottom_menu1, null);
-            MyGridView gridview = view.findViewById(R.id.mygridview);
+            GridView gridview = view.findViewById(R.id.mygridview);
             TextView btnCancel = (TextView) view.findViewById(R.id.btn_cancel);
 //            LinearLayout layContainer = (LinearLayout) view.findViewById(R.id.lay_container);
             ViewGroup.LayoutParams lpItem = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

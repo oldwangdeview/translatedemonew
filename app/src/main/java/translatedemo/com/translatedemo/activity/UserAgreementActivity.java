@@ -160,7 +160,7 @@ public class UserAgreementActivity extends BaseActivity {
         }
 
     }
-    @OnClick(R.id.iv_back_activity_basepersoninfo)
+    @OnClick({R.id.iv_back_activity_basepersoninfo,R.id.iv_back_activity_text})
     public void overActivity(){
         finish();
     }
