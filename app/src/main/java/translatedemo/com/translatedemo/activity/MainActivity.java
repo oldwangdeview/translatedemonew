@@ -32,11 +32,13 @@ import com.google.gson.Gson;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import butterknife.BindArray;
 import butterknife.BindView;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -50,6 +52,7 @@ import okhttp3.Response;
 import translatedemo.com.translatedemo.R;
 import translatedemo.com.translatedemo.adpater.MainPagerAdapter;
 import translatedemo.com.translatedemo.base.BaseActivity;
+import translatedemo.com.translatedemo.bean.InputHistoryBean;
 import translatedemo.com.translatedemo.bean.LoginBean;
 import translatedemo.com.translatedemo.bean.StatusCode;
 import translatedemo.com.translatedemo.contans.Contans;
@@ -57,6 +60,8 @@ import translatedemo.com.translatedemo.eventbus.OverMainactivty;
 import translatedemo.com.translatedemo.eventbus.TransTypeEvent;
 import translatedemo.com.translatedemo.eventbus.TranslateEvent;
 import translatedemo.com.translatedemo.eventbus.UpdateMainIndex;
+import translatedemo.com.translatedemo.eventbus.UpdateScrooEvent;
+import translatedemo.com.translatedemo.eventbus.UpdateUserEvent;
 import translatedemo.com.translatedemo.eventbus.UserDeteEvent;
 import translatedemo.com.translatedemo.http.HttpUtil;
 import translatedemo.com.translatedemo.http.ProgressSubscriber;
@@ -64,11 +69,13 @@ import translatedemo.com.translatedemo.http.RxHelper;
 import translatedemo.com.translatedemo.interfice.Translateinterfice;
 import translatedemo.com.translatedemo.recever.ListenClipboardService;
 import translatedemo.com.translatedemo.recever.TipViewController;
+import translatedemo.com.translatedemo.rxjava.Api;
 import translatedemo.com.translatedemo.rxjava.ApiUtils;
 import translatedemo.com.translatedemo.util.DeviceUuidFactory;
 import translatedemo.com.translatedemo.util.FileUtils;
 import translatedemo.com.translatedemo.util.LoadingDialogUtils;
 import translatedemo.com.translatedemo.util.LogUntil;
+import translatedemo.com.translatedemo.util.LogUtils;
 import translatedemo.com.translatedemo.util.PreferencesUtils;
 import translatedemo.com.translatedemo.util.ToastUtils;
 import translatedemo.com.translatedemo.util.UIUtils;
@@ -80,6 +87,12 @@ public class MainActivity extends BaseActivity {
     public ForbidScrollViewpager mViewPager;
     @BindView(R.id.navigation)
     BottomNavigationView navigation;
+//    @BindArray(R.array.translate_choiceimage)
+//    String[] choicedata;
+
+
+    @BindArray(R.array.translate_choiceimage1)
+    String[] choicedata1;
     private boolean startthred = true;
     private MainPagerAdapter mMainPagerAdapter;
     private Dialog mLoadingDialog;
@@ -160,34 +173,10 @@ public class MainActivity extends BaseActivity {
 
                         String content = text.toString();
                         if(PreferencesUtils.getInstance().getBoolean(Contans.TANSLATEFORKRJ,false)){
-                            String mdata = content.toString() .replace("'","")
-                                    .replace(" ","")
-                                    .replace("<","")
-                                    .replace(">","")
-                                    .replace("-","");;
-                            if(UIUtils.isEnglish(mdata)) {
-//                if (Build.MANUFACTURER.equals("Xiaomi")) {
-//                                Intent mIntent = new Intent(mcontent,TransDataActivty.class);
-//                                mIntent.putExtra(TransDataActivty.DATA,content.toString());
-//                                mIntent.putExtra(TransDataActivty.TYPE,1);
-//                                mcontent.startActivity(mIntent);
-//                } else {
-                    mycontent = content;
-                    tanslatedata(mycontent);
-//                    if (mTipViewController != null) {
-//                        mTipViewController.updateContent(content);
-//                    } else {
-//                        mTipViewController = new TipViewController(getApplication(), content);
-//                        mTipViewController.setViewDismissHandler(new TipViewController.ViewDismissHandler() {
-//                            @Override
-//                            public void onViewDismiss() {
-//
-//                            }
-//                        });
-//                        mTipViewController.show();
-//                    }
-//                }
-                            }
+
+                              mycontent = content;
+                              tanslatedata(mycontent);
+//                             }
                         }
                     }
                 }
@@ -250,6 +239,7 @@ public class MainActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             isExit = false;
+
         }
     };
     private void creartFilepath(){
@@ -292,11 +282,16 @@ public class MainActivity extends BaseActivity {
         if(index.index!=0) {
             Log.e("index",index.index+"");
             mindex = index.index;
+            if(index.index!=3) {
+                mOnNavigationItemSelectedListener.onNavigationItemSelected(navigation.getMenu().getItem(index.index));
+            }else{
+                mOnNavigationItemSelectedListener.onNavigationItemSelected(navigation.getMenu().getItem(0));
+            }
             mViewPager.setCurrentItem(index.index,false);
-
             UIUtils.showFullScreen(MainActivity.this, false);
             updateactionbar();
         }else{
+            mindex = index.index;
             navigation.setSelectedItemId(navigation.getMenu().getItem(index.index).getItemId());
             mOnNavigationItemSelectedListener.onNavigationItemSelected(navigation.getMenu().getItem(index.index));
             mViewPager.setCurrentItem(index.index,false);
@@ -325,6 +320,8 @@ public class MainActivity extends BaseActivity {
 
     }
 
+
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -333,13 +330,16 @@ public class MainActivity extends BaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void finishMainactivity(OverMainactivty over){
+
+        EventBus.getDefault().post(new UpdateScrooEvent());
         finish();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void totranslate(TranslateEvent event){
         mViewPager.setCurrentItem(1,false);
-        mOnNavigationItemSelectedListener.onNavigationItemSelected(navigation.getMenu().getItem(1));
+//        mOnNavigationItemSelectedListener.onNavigationItemSelected(navigation.getMenu().getItem(1));
+        navigation.setSelectedItemId(navigation.getMenu().getItem(1).getItemId());
         UIUtils.showFullScreen(MainActivity.this,true);
         updateactionbar();
     }
@@ -435,7 +435,7 @@ public class MainActivity extends BaseActivity {
                 super.run();
                 if(startthred){
                     try{
-                        Thread.sleep(1000*60);
+                        Thread.sleep(1000*5);
                         checklogin();
                     }catch (Exception e){
 
@@ -456,7 +456,7 @@ public class MainActivity extends BaseActivity {
             public void run() {
                 super.run();
                 try {
-                    okPost("en_zh-cn",centent,102);
+                    okPost(UIUtils.getlangvagetype(choicedata1[PreferencesUtils.getInstance().getInt(Contans.INPUT_STRING,2)],choicedata1),UIUtils.getlangvagetype(choicedata1[PreferencesUtils.getInstance().getInt(Contans.OUTPUT_STRING,1)],choicedata1),centent,102);
                 }catch (Exception e){
                     new LogUntil(mcontent,"content",e.getMessage());
                 }
@@ -496,23 +496,28 @@ public class MainActivity extends BaseActivity {
 
     Translateinterfice mlister = new Translateinterfice() {
         @Override
-        public void evntbustomessage(String data) {
+        public void evntbustomessage(String data,String requestdata) {
             Intent mIntent = new Intent(mcontent,TransDataActivty.class);
             mIntent.putExtra(TransDataActivty.DATA,data.toString());
+            mIntent.putExtra(TransDataActivty.REQUESTDATA,requestdata);
             mIntent.putExtra(TransDataActivty.TYPE,1);
             mcontent.startActivity(mIntent);
         }
     };
 
-    private void okPost(String outputtype, String data,final int type) throws IOException {
-        String path = "https://nmt.xmu.edu.cn/nmt"+"?lang="+outputtype+"&src="+data;
-
+    private void okPost(String input_type ,String outputtype, String data,final int type) throws IOException {
+//        String path = "http://sz-nmt-1.cloudtrans.org:2201/nmt"+"?lang="+outputtype+"&src="+data;
+        String path = Api.trasnslate_url+"?from="+input_type+"&to="+outputtype+"&apikey=" + Api.translate_key + "&src_text="+data;
+        Log.e("message_okepostpath",path);
+        //   new LogUntil(mContext,TAG,"path:"+path);
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(5, TimeUnit.MINUTES)
                 .readTimeout(5, TimeUnit.MINUTES)
                 .build();
         Request request = new Request.Builder()
                 .url(path)
+//                .post(body)
+                .addHeader("Content-Type","application/x-www-form-urlencoded; charset=" + "utf-8")
                 .get()
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -525,14 +530,147 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String string = response.body().string();
-                Message msg = new Message();
-                msg.obj = string;
-                msg.arg1 = type;
-                mmhander.sendMessage(msg);
+                try {
+                    Log.e("returnmedsage",string);
+                    JSONObject json = new JSONObject(string);
+                    if(json.has("tgt_text")){
+                        string = json.getString("tgt_text");
+
+                    }else{
+                        string = "[ERR]";
+                    }
+                    Message msg = new Message();
+                    msg.obj = string;
+                    msg.arg1 = type;
+                    mmhander.sendMessage(msg);
+                }catch (Exception e){
+
+                }
             }
         });
 //        return response.body().string();
     }
+
+//    private String getlangvagetype(String data){
+//        String outputexttype = "";
+//        for(int i=0;i<choicedata.length;i++){
+//            if(data.equals(choicedata[i])){
+//                switch (i){
+//                    case 0:
+//                        outputexttype = "zh-cn";
+//                        break;
+//                    case 1:
+//                        outputexttype = "en";
+//                        break;
+//                    case 2:
+//                        outputexttype = "bo";
+//                        break;
+//                    case 3:
+//                        outputexttype = "ug";
+//                        break;
+//                    case 4:
+//                        outputexttype = "zh-tw";
+//                        break;
+//                    case 5:
+//                        outputexttype = "ja";
+//                        break;
+//                    case 6:
+//                        outputexttype = "fr";
+//                        break;
+//                    case 7:
+//                        outputexttype = "es";
+//                        break;
+//                    case 8 :
+//                        outputexttype = "pt";
+//                        break;
+//                    case 9:
+//                        outputexttype = "de";
+//                        break;
+//                    case 10:
+//                        outputexttype = "it";
+//                        break;
+//                    case 11:
+//                        outputexttype = "ru";
+//                        break;
+//                    case 12:
+//                        outputexttype = "id";
+//                        break;
+//                    case 13:
+//                        outputexttype = "ms";
+//                        break;
+//
+//                }
+//            }else{
+//                continue;
+//            }
+//        }
+//
+//        return outputexttype;
+//    }
+//
+//
+//    private String getlangvagetype1(String data){
+//        String outputexttype = "";
+//        for(int i=0;i<choicedata.length;i++){
+//            if(data.equals(choicedata[i])){
+//                switch (i){
+//                    case 0:
+//                        outputexttype = "zh-cn";
+//                        break;
+//                    case 1:
+//                        outputexttype = "en";
+//                        break;
+//                    case 2:
+//                        outputexttype = "bo";
+//                        break;
+//                    case 3:
+//                        outputexttype = "ug";
+//                        break;
+//                    case 4:
+//                        outputexttype = "mn";
+//                        break;
+//                    case 5:
+//                        outputexttype = "zh-tw";
+//                        break;
+//                    case 6:
+//                        outputexttype = "ja";
+//                        break;
+//                    case 7:
+//                        outputexttype = "fr";
+//                        break;
+//                    case 8 :
+//                        outputexttype = "es";
+//                        break;
+//                    case 9:
+//                        outputexttype = "pt";
+//                        break;
+//                    case 10:
+//                        outputexttype = "de";
+//                        break;
+//                    case 11:
+//                        outputexttype = "it";
+//                        break;
+//                    case 12:
+//                        outputexttype = "ru";
+//                        break;
+//                    case 13:
+//                        outputexttype = "id";
+//                        break;
+//                    case 14:
+//                        outputexttype = "ms";
+//                        break;
+//                    case 15:
+//                        outputexttype = "vi";
+//                        break;
+//
+//                }
+//            }else{
+//                continue;
+//            }
+//        }
+//
+//        return outputexttype;
+//    }
 
 
 }

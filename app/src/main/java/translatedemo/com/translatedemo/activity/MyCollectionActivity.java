@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -55,6 +56,8 @@ public class MyCollectionActivity  extends BaseActivity {
     TextView title_name;
     @BindView(R.id.yrecycleview_)
     YRecycleview yrecycleview_;
+    @BindView(R.id.nomessage)
+    LinearLayout nomessage;
     private CollectionAdpater madpater;
     private List<CollectionListbean> listdata = new ArrayList<>();
     private LoadingPagerHead mLoadingPagerHead;
@@ -185,6 +188,7 @@ public class MyCollectionActivity  extends BaseActivity {
                     if(countpage!=1){
                         mLoadingPagerHead.showPagerView(Contans.STATE_SUCCEED);
                     }else {
+                        nomessage.setVisibility(View.VISIBLE);
                         mLoadingPagerHead.showPagerView(Contans.STATE_EMPTY);
                     }
                 }

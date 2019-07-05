@@ -1,6 +1,7 @@
 package translatedemo.com.translatedemo.application;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Handler;
 
 import com.umeng.commonsdk.UMConfigure;
@@ -35,7 +36,7 @@ public class BaseApplication extends AbsSuperApplication {
     public static BaseApplication mapp;
     public static boolean isShowLog = true ;//是否显示log
 
-
+    public static Typeface TypeFaceYaHei;
 
 //    public static RefWatcher getRefWatcher(Context context) {
 //        BaseApplication application = (BaseApplication) context.getApplicationContext();
@@ -52,7 +53,22 @@ public class BaseApplication extends AbsSuperApplication {
         }
         mRefWatcher = LeakCanary.install(this);*/
         closeAndroidPDialog();
-        // 1.上下文
+//        TypeFaceYaHei = Typeface.createFromAsset(getAssets(), "fonts/TIBETZC2.ttf");
+//
+//        try
+//        {
+//            Field field = Typeface.class.getDeclaredField("SERIF");
+//            field.setAccessible(true);
+//            field.set(null, TypeFaceYaHei);
+//        }
+//        catch (NoSuchFieldException e)
+//        {
+//            e.printStackTrace();
+//        }
+//        catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        }
+        // 1.上下文}
 //        com.darsom.aar.App.Companion.setInstance(this);
         mContext = getApplicationContext();
         UMConfigure.setLogEnabled(true);
@@ -72,6 +88,7 @@ public class BaseApplication extends AbsSuperApplication {
         crashHandler.init(getApplicationContext());
 
 //        PushAgent
+
 
     }
 
@@ -108,29 +125,4 @@ public class BaseApplication extends AbsSuperApplication {
 
 
 
-//    /**
-//     * 获取toke
-//     * @return
-//     */
-//    public static String getToken(){
-//        return isLoginSuccess?sUserInfoBean.token:"scmsw";
-//}
-//
-//    /**
-//     * 获取userId
-//     * @return
-//     */
-//    public static String getUserId(){
-//
-//        return sUserInfoBean!=null?sUserInfoBean.getUserId():"";
-//    }
-//
-//    /**
-//     * 获取userId
-//     * @return
-//     */
-//    public static String getNewUserId(){
-//
-//        return sUserInfoBean!=null?sUserInfoBean.getUserId():null;
-//    }
 }

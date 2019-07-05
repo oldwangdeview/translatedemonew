@@ -28,6 +28,7 @@ import translatedemo.com.translatedemo.bean.GetCouponListBean;
 import translatedemo.com.translatedemo.bean.StatusCode;
 import translatedemo.com.translatedemo.contans.Contans;
 import translatedemo.com.translatedemo.eventbus.UpdateCouPonEvent;
+import translatedemo.com.translatedemo.eventbus.UpdateCouponListEvent;
 import translatedemo.com.translatedemo.http.HttpUtil;
 import translatedemo.com.translatedemo.http.ProgressSubscriber;
 import translatedemo.com.translatedemo.http.RxHelper;
@@ -123,7 +124,7 @@ public class CouponFragment3  extends BaseFragment {
         HttpUtil.getInstance().toSubscribe(observable, new ProgressSubscriber<List<GetCouponListBean>>(mContext) {
             @Override
             protected void _onNext(StatusCode<List<GetCouponListBean>> stringStatusCode) {
-                new LogUntil(mContext,TAG+"getCouponList",new Gson().toJson(stringStatusCode));
+                new LogUntil(mContext,TAG+"getCouponList_3",new Gson().toJson(stringStatusCode));
                 LoadingDialogUtils.closeDialog(mLoadingDialog);
 
                 if(stringStatusCode.getCode()==0&&stringStatusCode.getData()!=null&&stringStatusCode.getData().size()>0) {
@@ -146,7 +147,7 @@ public class CouponFragment3  extends BaseFragment {
         }, "", lifecycleSubject, false, true);
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void updatedata(UpdateCouPonEvent event){
+    public void updatedata(UpdateCouponListEvent event){
         retry();
     }
 

@@ -155,7 +155,11 @@ public class UserAgreementActivity extends BaseActivity {
                     })
                     .into(content);
         }else{
-            title_name.setText(getResources().getString(R.string.seting_text_aboutus));
+            if(type!=5) {
+                title_name.setText(getResources().getString(R.string.seting_text_aboutus));
+            }else{
+                title_name.setText(getResources().getString(R.string.membercenter_text_hyxy).replace("《","").replace("》",""));
+            }
             getconfig(type);
         }
 

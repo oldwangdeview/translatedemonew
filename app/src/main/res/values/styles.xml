@@ -87,8 +87,30 @@
     </style>
     <style name="StartAppTheme" parent="AppTheme.Base">
         <item name="android:windowNoTitle">true</item>
+
+        <!--<item name="android:typeface">serif</item>-->
         <item name="android:windowBackground">@drawable/layout_list_start_pic</item>
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+
+    <style name="FontStyle" parent="AppTheme">
+        <item name="android:typeface">normal</item>
+    </style>
+
+    <!-- 自定义动画样式 -->
+    <style name='fade' parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/fade_in</item>
+        <item name="android:activityOpenExitAnimation">@anim/fade_out</item>
+        <item name="android:activityCloseEnterAnimation">@anim/fade_in</item>
+        <item name="android:activityCloseExitAnimation">@anim/fade_out</item>
+    </style>
+    <!-- 自定义动画主题 -->
+    <style name="Theme.Tsh" parent="AppTheme.Base">
+        <item name="android:windowAnimationStyle">@style/fade</item>
+        <item name="android:windowNoTitle">true</item>
+
+        <!--<item name="android:typeface">serif</item>-->
+        <item name="android:windowBackground">@drawable/layout_list_start_pic</item>
     </style>
 
 </resources>

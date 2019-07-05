@@ -89,6 +89,7 @@ public class MycouponActivity extends BaseActivity {
     @OnClick(R.id.tv_small_title_layout_head)
     public void gotogetcoupon(){
         GetCouponActivty.startactivity(this);
+//        finish();
     }
 
     public static void startactivity(Context mContext){

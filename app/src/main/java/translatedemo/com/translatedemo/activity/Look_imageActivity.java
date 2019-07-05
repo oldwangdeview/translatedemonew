@@ -37,7 +37,7 @@ public class Look_imageActivity extends BaseActivity {
     }
 
     @OnClick(R.id.image)
-    public void finish(){
+    public void mfinish(){
         finish();
     }
     public static void startactivity(Context mContext,String imagepath){

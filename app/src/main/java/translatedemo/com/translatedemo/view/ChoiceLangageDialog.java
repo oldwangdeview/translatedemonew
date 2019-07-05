@@ -104,7 +104,7 @@ public class ChoiceLangageDialog extends Dialog {
             lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
             window.setAttributes(lp);
             window.setGravity(Gravity.BOTTOM);
-            View view = LayoutInflater.from(p.context).inflate(R.layout.dialog_bottom_menu1, null);
+            View view = LayoutInflater.from(p.context).inflate(R.layout.dialog_bottom_choicelangeuge, null);
             GridView gridview = view.findViewById(R.id.mygridview);
             TextView btnCancel = (TextView) view.findViewById(R.id.btn_cancel);
 //            LinearLayout layContainer = (LinearLayout) view.findViewById(R.id.lay_container);

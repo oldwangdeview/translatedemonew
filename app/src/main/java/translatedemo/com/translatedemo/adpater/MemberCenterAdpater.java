@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import translatedemo.com.translatedemo.R;
@@ -81,7 +82,7 @@ public class MemberCenterAdpater extends BaseAdapter {
 
 
             keshen.setVisibility(View.VISIBLE);
-            String text = mContext.getResources().getString(R.string.keshen)+ "¥"+((data.month*onemonthmoney-data.amount));
+            String text = mContext.getResources().getString(R.string.keshen)+ (String.format("%.2f", data.month*onemonthmoney-data.amount)+mContext.getResources().getString(R.string.yuan));
             keshen.setText(text);
 
         }

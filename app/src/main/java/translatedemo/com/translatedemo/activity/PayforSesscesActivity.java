@@ -3,6 +3,7 @@ package translatedemo.com.translatedemo.activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -23,8 +24,10 @@ import translatedemo.com.translatedemo.R;
 import translatedemo.com.translatedemo.base.BaseActivity;
 import translatedemo.com.translatedemo.base.BasePersonActivity;
 import translatedemo.com.translatedemo.bean.DucationBean;
+import translatedemo.com.translatedemo.bean.LoginBean;
 import translatedemo.com.translatedemo.bean.StatusCode;
 import translatedemo.com.translatedemo.contans.Contans;
+import translatedemo.com.translatedemo.eventbus.UpdateMainIndex;
 import translatedemo.com.translatedemo.eventbus.UpdateUserEvent;
 import translatedemo.com.translatedemo.http.HttpUtil;
 import translatedemo.com.translatedemo.http.ProgressSubscriber;
@@ -59,7 +62,7 @@ public class PayforSesscesActivity extends BaseActivity {
     @Override
     protected void initData() {
         super.initData();
-        tv_title_activity_baseperson.setText("支付成功");
+        tv_title_activity_baseperson.setText(getResources().getString(R.string.payfor_sessces_titlename));
         iv_back_activity_text.setVisibility(View.VISIBLE);
         timedata = getIntent().getDoubleExtra(Contans.INTENT_DATA,-1);
         if(timedata ==-1){
@@ -105,19 +108,24 @@ public class PayforSesscesActivity extends BaseActivity {
                         })
                         .subscribeOn(AndroidSchedulers.mainThread());
 
-        HttpUtil.getInstance().toSubscribe(observable, new ProgressSubscriber<List<DucationBean>>(PayforSesscesActivity.this) {
+        HttpUtil.getInstance().toSubscribe(observable, new ProgressSubscriber<LoginBean>(PayforSesscesActivity.this) {
             @Override
-            protected void _onNext(StatusCode<List<DucationBean>> stringStatusCode) {
+            protected void _onNext(StatusCode<LoginBean> stringStatusCode) {
                 new LogUntil(PayforSesscesActivity.this,TAG+"getDucation",new Gson().toJson(stringStatusCode));
+                if(!TextUtils.isEmpty(stringStatusCode.getData().memberBeginTime)){
                 LoadingDialogUtils.closeDialog(mLoadingDialog);
-                PreferencesUtils.getInstance().putString(BaseActivity.LOGINUSER,new Gson().toJson(stringStatusCode.getData()));
+
                 BaseActivity.user = null;
+                PreferencesUtils.getInstance().putString(BaseActivity.LOGINUSER,new Gson().toJson(stringStatusCode.getData()));
                 try {
-                    time.setText(BaseActivity.getuser().memberBeginTime + " 至 " + BaseActivity.getuser().memberEndTime);
+                    time.setText(BaseActivity.getuser().memberBeginTime + getResources().getString(R.string.payfor_sessces_zhi) + BaseActivity.getuser().memberEndTime);
                 }catch (Exception e){
                     e.printStackTrace();
                 }
                 EventBus.getDefault().post(new UpdateUserEvent());
+                EventBus.getDefault().post(new UpdateMainIndex((0)));}else{
+//                    getuserdata();
+                }
             }
 
             @Override

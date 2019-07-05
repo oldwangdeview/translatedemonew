@@ -8,7 +8,9 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 
 import translatedemo.com.translatedemo.base.BaseActivity;
+
 import translatedemo.com.translatedemo.contans.Contans;
+
 import translatedemo.com.translatedemo.util.CheckPermission;
 import translatedemo.com.translatedemo.util.UIUtils;
 
@@ -30,10 +32,20 @@ public class FalshActivity  extends BaseActivity{
 
     };
 
+   private boolean startthrend = true;
+
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         UIUtils.showFullScreen(FalshActivity.this,true);
+
+    }
+
+    @Override
+    protected void initView() {
 
 
         new Thread(){
@@ -41,40 +53,35 @@ public class FalshActivity  extends BaseActivity{
             public void run() {
                 super.run();
                 try {
-                    Thread.sleep(1000);
-                   Message msg  = new Message();
-                   msg.arg1 =1;
-                   mhander.sendMessage(msg);
+                    Thread.sleep(2500);
+                    Message msg = new Message();
+                    msg.arg1 = 101;
+                    mhander.sendMessage(msg);
                 }catch (Exception e){
-
+                 e.printStackTrace();
                 }
             }
         }.start();
 
-
-
     }
 
-    @Override
-    protected void initView() {
-
-    }
 
     Handler mhander = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if(msg.arg1==1){
+            if(msg.arg1==101){
                 intdata();
             }
         }
     };
 
+
     private void intdata(){
 
         if (!UIUtils.isMarshmallow()) {
-            ChoiceLanguageActivity.startactivity(FalshActivity.this);
-            finish();
+           BannerActivity.startactivity(this);
+           finish();
         } else {
             CheckPermission checkPermission = new CheckPermission(FalshActivity.this);
             if (checkPermission.permissionSet(PERMISSION)) {
@@ -82,7 +89,7 @@ public class FalshActivity  extends BaseActivity{
                 PermissionActivity.startActivityForResult(FalshActivity.this, Contans.PERMISSION_REQUST_COND, PERMISSION);
             } else {
 
-                ChoiceLanguageActivity.startactivity(FalshActivity.this);
+                BannerActivity.startactivity(this);
                 finish();
             }
         }
@@ -97,10 +104,16 @@ public class FalshActivity  extends BaseActivity{
                 finish();
             } else if (resultCode == PermissionActivity.PERMISSION_GRANTED) {
                 //有权限
-                ChoiceLanguageActivity.startactivity(this);
-                finish();
+               BannerActivity.startactivity(this);
+               finish();
             }
         }
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        startthrend = false;
+    }
 }

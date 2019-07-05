@@ -25,9 +25,9 @@ public class MainFragmentFactory {
 
     public static Fragment getFragment(int index) {
         Fragment fragment=null;
-        if (mMap.containsKey(index)){
-            fragment=   mMap.get(index);
-        }else {
+//        if (index!=TRANSLATE_FRAGMENT&&mMap.containsKey(index)){
+//            fragment=   mMap.get(index);
+//        }else {
             switch (index) {
                 case TRANSLATE_FRAGMENT:
                     fragment = new TranslateFragment();
@@ -43,9 +43,9 @@ public class MainFragmentFactory {
                     break;
             }
 
-            mMap.put(index,fragment);
-
-        }
+//            mMap.put(index,fragment);
+//
+//        }
         return fragment;
 
     }

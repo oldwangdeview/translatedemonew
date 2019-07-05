@@ -40,6 +40,7 @@ import translatedemo.com.translatedemo.bean.GetCouponListBean;
 import translatedemo.com.translatedemo.bean.LoginBean;
 import translatedemo.com.translatedemo.bean.StatusCode;
 import translatedemo.com.translatedemo.contans.Contans;
+import translatedemo.com.translatedemo.eventbus.UpdateCouponListEvent;
 import translatedemo.com.translatedemo.eventbus.UpdateCuponEvent;
 import translatedemo.com.translatedemo.eventbus.UpdateUserEvent;
 import translatedemo.com.translatedemo.http.HttpUtil;
@@ -85,10 +86,10 @@ public class UserinfoFragment extends BaseFragment {
     private void updateUserdata(){
         LoginBean user = BaseActivity.getuser();
         if(!TextUtils.isEmpty(user.headBigImage)){
-            UIUtils.loadImageViewRoud(mContext,user.headBigImage,headimaege,UIUtils.dip2px(40));
+            UIUtils.loadImageViewRoud(mContext,user.headBigImage,headimaege,UIUtils.dip2px(60));
         }
         if(!TextUtils.isEmpty(user.headSmallImage)){
-            UIUtils.loadImageViewRoud(mContext,user.headBigImage,headimaege,UIUtils.dip2px(40));
+            UIUtils.loadImageViewRoud(mContext,user.headBigImage,headimaege,UIUtils.dip2px(60));
         }
         if(!TextUtils.isEmpty(user.nickName)){
             name.setText(user.nickName);
@@ -120,13 +121,17 @@ public class UserinfoFragment extends BaseFragment {
             sex_image.setVisibility(View.GONE);
         }
         if(!TextUtils.isEmpty(user.isMember+"")&&user.isMember>=0){
+            new LogUntil(mContext,TAG,"useradta"+new Gson().toJson(user));
             switch (user.isMember){
                 case 0:
+                    vip_iamge.setVisibility(View.VISIBLE);
                     vip_iamge.setImageResource(R.mipmap.huiyuan1);
                     break;
                 case 1:
+                    vip_iamge.setVisibility(View.VISIBLE);
                     vip_iamge.setImageResource(R.mipmap.huiyuan);
                     break;
+
                     default:
                         vip_iamge.setVisibility(View.GONE);
                         break;
@@ -135,7 +140,12 @@ public class UserinfoFragment extends BaseFragment {
             vip_iamge.setVisibility(View.GONE);
         }
 
+//        if(!TextUtils.isEmpty(user.memberBeginTime)){
+//            vip_iamge.setVisibility(View.VISIBLE);
+//            vip_iamge.setImageResource(R.mipmap.huiyuan);
+//        }
 
+        getcuponsize();
     }
 
 
@@ -266,6 +276,7 @@ public class UserinfoFragment extends BaseFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updatacopo( UpdateCuponEvent uodate){
         getcuponsize();
+        EventBus.getDefault().post(new UpdateCouponListEvent());
     }
 
     @Override

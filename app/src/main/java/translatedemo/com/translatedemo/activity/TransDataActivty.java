@@ -10,6 +10,7 @@ public class TransDataActivty extends BaseActivity {
 
     public static final String DATA = "stringdata";
     public static final String TYPE = "inttypedata";
+    public static final String REQUESTDATA = "requestdata";
     @Override
     protected void initView() {
 

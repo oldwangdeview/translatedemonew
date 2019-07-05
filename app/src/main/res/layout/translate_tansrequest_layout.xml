@@ -36,7 +36,32 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/translate_text_uploaderreo"
+            android:layout_marginLeft="@dimen/dp_10"
             android:textSize="@dimen/sp_12"
             android:textColor="@color/c_999999"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_49"
+        android:background="@color/c_ffffff"
+        android:paddingRight="@dimen/dp_10"
+        android:orientation="horizontal"
+        android:layout_below="@+id/bottom_view"
+        android:gravity="right">
+
+
+        <TextView
+            android:id="@+id/cidian_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/sp_12"
+            android:layout_gravity="center_vertical"
+            android:textColor="#bfbfbf"
+            android:text="@string/translatecd_text_name"
+            />
+
+
     </LinearLayout>
 </RelativeLayout>

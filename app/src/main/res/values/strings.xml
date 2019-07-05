@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">翻译通</string>
+    <string name="app_name">雅鲁翻译通</string>
 
     <string name="help">帮助</string>
     <string name="string_help_text">当前应用缺少必要权限。\n\n请点击\"设置\"-\"权限\"-打开所需权限。\n\n最后点击两次后退按钮，即可返回。</string>
@@ -11,7 +11,7 @@
     <string name="imagelist">本地相册</string>
     <string name="dialog_message">是否退出登录？</string>
     <string name="getcode_code_startcode">S后重新获取</string>
-
+    <string name="choice_language_choicebottom_title">翻译通</string>
     <string name="choice_language_choicetext">请选择习惯语言</string>
     <string name="choice_language_choicebottom_text">© 翻译通</string>
     <string name="returntext">返回</string>
@@ -58,24 +58,161 @@
     <string name="translate_text_translate">在此输入您要查询的单词</string>
     <string name="translate_text_translate1">在此输入你要翻译的句子</string>
     <string name="translate_text_netmessage">网络释义</string>
-    <string-array name="translate_choiceimage">
-        <item>藏语</item>
-        <item>汉语</item>
+
+    <string-array name="translate_choiceimage1">
+        <item>简体中文</item>
         <item>英语</item>
+        <item>藏语</item>
+        <item>维吾尔文</item>
+        <item>蒙语</item>
         <item>繁体中文</item>
-        <item>德文</item>
+        <item>日文</item>
         <item>法文</item>
         <item>西班牙文</item>
         <item>葡萄牙文</item>
+        <item>德文</item>
         <item>意大利文</item>
         <item>俄文</item>
-        <item>日文</item>
         <item>印尼文</item>
         <item>马来文</item>
-        <item>维吾尔文</item>
+        <item>越南文</item>
+
+
+        <item>南非荷兰语</item>
+        <item>阿姆哈拉语</item>
+        <item>阿拉伯语</item>
+        <item>阿塞拜疆语</item>
+        <item>巴什基尔语</item>
+        <item>白俄罗斯语</item>
+        <item>保加利亚语</item>
+
+
+        <item>孟加拉语</item>
+        <item>波斯尼亚语</item>
+        <item>加泰罗尼亚语</item>
+        <item>宿务语</item>
+        <item>科西嘉语</item>
+        <item>捷克语</item>
+        <item>威尔士语</item>
+
+
+        <item>丹麦语</item>
+        <item>希腊语</item>
+        <item>世界语</item>
+        <item>爱沙尼亚语</item>
+        <item>巴斯克语</item>
+        <item>波斯语</item>
+        <item>芬兰语</item>
+
+
+        <item>菲律宾语</item>
+        <item>斐济语</item>
+        <item>弗里西语</item>
+        <item>爱尔兰语</item>
+        <item>苏格兰盖尔语</item>
+        <item>加利西亚</item>
+        <item>古吉拉特语</item>
+
+
+        <item>豪萨语</item>
+        <item>夏威夷语</item>
+        <item>希伯来语</item>
+        <item>印地语</item>
+        <item>克罗地亚语</item>
+        <item>海地克里奥尔语</item>
+        <item>匈牙利语</item>
+
+
+        <item>亚美尼亚语</item>
+        <item>伊博语</item>
+        <item>冰岛语</item>
+        <item>印尼爪哇语</item>
+        <item>格鲁吉亚语</item>
+        <item>哈萨克语</item>
+        <item>哈萨克语（西里尔）</item>
+
+
+        <item>高棉语</item>
+        <item>卡纳达语</item>
+        <item>韩语</item>
+        <item>库尔德语</item>
+        <item>吉尔吉斯语</item>
+        <item>拉丁语</item>
+        <item>卢森堡语</item>
+
+
+        <item>老挝语</item>
+        <item>立陶宛语</item>
+        <item>拉脱维亚语</item>
+        <item>马尔加什语</item>
+        <item>马里语</item>
+        <item>毛利语</item>
+        <item>马其顿语</item>
+
+
+        <item>马拉雅拉姆语</item>
+        <item>蒙古语(西里尔)</item>
+        <item>马拉地语</item>
+        <item>山地马里语</item>
+        <item>马耳他语</item>
+        <item>白苗文</item>
+        <item>缅甸语</item>
+
+
+
+        <item>尼泊尔语</item>
+        <item>荷兰语</item>
+        <item>挪威语</item>
+        <item>齐切瓦语</item>
+        <item>克雷塔罗奥托米语</item>
+        <item>旁遮普语</item>
+        <item>帕皮阿门托语</item>
+
+
+        <item>波兰语</item>
+        <item>普什图语</item>
+        <item>罗马尼亚语</item>
+        <item>信德语</item>
+        <item>僧伽罗语</item>
+        <item>斯洛伐克语</item>
+        <item>斯洛文尼亚语</item>
+
+
+        <item>萨摩亚语</item>
+        <item>修纳语</item>
+        <item>索马里语</item>
+        <item>阿尔巴尼亚语</item>
+        <item>塞尔维亚语</item>
+        <item>塞索托语</item>
+        <item>印尼巽他语</item>
+
+
+        <item>瑞典语</item>
+        <item>斯瓦希里语</item>
+        <item>泰米尔语</item>
+        <item>泰卢固语</item>
+        <item>塔吉克语</item>
+        <item>泰语</item>
+        <item>汤加语</item>
+
+
+        <item>土耳其语</item>
+        <item>鞑靼语</item>
+        <item>塔希提语</item>
+        <item>乌德穆尔特语</item>
+        <item>乌克兰语</item>
+        <item>乌尔都语</item>
+        <item>乌兹别克语</item>
+
+
+        <item>南非科萨语</item>
+        <item>意第绪语</item>
+        <item>约鲁巴语</item>
+        <item>尤卡坦玛雅语</item>
+        <item>粤语</item>
+        <item>南非祖鲁语</item>
 
     </string-array>
-
     <!--个人中心-->
     <string name="userinfo_text_titlename">个人中心</string>
     <string name="userinfo_text_vipcenter">会员中心</string>
@@ -131,6 +268,11 @@
     <string name="membercenter_text_njcd">牛津藏英词典</string>
     <string name="membercenter_text_xlcd">小林藏梵词典</string>
     <string name="membercenter_text_endtime">到期时间:</string>
+    <string name="translate_text_tis">没有找到结果，您可以切换vip服务试试</string>
+    <string name="membercenter_text_cjgg">纯净广告</string>
+    <string name="membercenter_text_hylxxz">词典离线下载</string>
+    <string name="membercenter_text_zxhybs">尊享会员标识</string>
+    <string name="membercenter_text_hyxy">《会员使用服务协议》</string>
 
     <!--我的收藏-->
     <string name="mycollection_text_titlename">我的收藏</string>
@@ -155,6 +297,8 @@
     <string name="offlin_text_titlename">离线数据</string>
     <string name="offlin_text_ts">下载离线数据包，可使您可以在没有网络或网络较差的环境下正常使用翻译功能。</string>
     <string name="offlin_xiaz">立即下载</string>
+    <string name="offlin_dialog_title">提示</string>
+    <string name="offlin_dialog_text">该词典仅会员可下载，是否开通会员？</string>
     <string name="offlin_textyxz">已下载</string>
 
     <!--通知公告-->
@@ -187,8 +331,8 @@
     <!--关于我们-->
     <string name="aboutus_text_titlename">关于我们</string>
     <string name="aboutus_text_content">藏语翻译宝是为满足日益广泛的藏语和其他语言的沟通需求，开发的一款可进行藏汉、藏英、藏梵等的翻译APP，深受广大藏族同胞、各国藏语爱好者、入藏旅游人士的欢迎。</string>
-    <string name="aboutus_text_phone">咨询电话：</string>
-    <string name="aboutus_text_email">联系邮箱：</string>
+    <string name="aboutus_text_phone">咨询电话 </string>
+    <string name="aboutus_text_email">联系邮箱 </string>
     <string name="aboutus_text_messageinfo">版权所有 © 翻译通</string>
     <string name="aboutus_text_xieyi">《用户使用服务协议》</string>
 
@@ -212,8 +356,7 @@
     <string name="helpcenter_text_titlename">帮助中心</string>
     <!--人工翻译-->
     <string name="pople_translate_text_titlenam">人工翻译</string>
-    <string name="pople_translate_text_ts">我们提供专业的人工翻译服务，可进行藏汉、藏英、藏梵等多语种翻译。服务品质高，价格合理，是您的不二之选，我们将竭诚为你服务。
-您可以通过下面的联系方式联系到我们</string>
+    <string name="pople_translate_text_ts">翻译通是一款可对民文进行多语言词典查询及翻译的免费工具型APP，可有效帮助您在民族文语言环境下的沟通，目前包含汉语、英语、藏语、维语、蒙语、壮语、哈萨克语、彝语等。另外我们也提供人工服务，架起文沟通的桥梁。</string>
 
 
     <!--订单支付-->
@@ -233,18 +376,20 @@
 
 
 
-    <string name="share_text_content">最好用的藏语翻译助手包含藏语 对汉语、英语、梵语等语言的翻译，可有效帮助您在藏语言环境下的沟通，架起文化沟通的桥梁。</string>
-
+    <string name="share_text_content">
+     雅鲁翻译通是一款多语言词典查询和翻译的免费工具型APP，包含汉语、英语、藏语、维语、蒙语、壮语、哈萨克语、彝语等的词典和翻译，可有效帮助您在多语言环境中的学习和交流。同时我们也提供人工翻译服务
+	</string>
     <string name="cidian_niujin">牛津词典</string>
     <string name="cidian_weishi">韦氏词典</string>
 
 
 
-    <string name="oneyear">一  年</string>
+    <string name="oneyear">1 年</string>
     <string name="byear">180天</string>
     <string name="onejidu">90 天</string>
     <string name="onemonth">30 天</string>
     <string name="keshen">可省</string>
+    <string name="yuan">元</string>
 
     <!--跨软件翻译-->
     <string name="strideo_text_titlename">跨软件翻译</string>
@@ -256,4 +401,19 @@
     <string name="strideo_wb_yuanwenfay">原文翻译</string>
 
     <string name="translatejz_text_ts">由厦门大学人工智能实验室提供技术支持</string>
+
+    <string name="translatecd_text_name">该翻译结果来自《%》</string>
+    <string name="translatejz_text_choicelang">选择语言</string>
+
+    <string name="falsh_text_title">S 跳转</string>
+    <string name="payfor_sessces_titlename">支付成功</string>
+    <string name="payfor_sessces_hyyouxq">会员有效期</string>
+    <string name="payfor_sessces_zhi">至་</string>
+    <string name="payfor_sessces_ljty">立即体验</string>
+    <string name="yuanwen">原文：</string>
+    <string name="yiwen">译文：</string>
+    <string name="titem_over">领取后%天过期</string>
+
+    <string name="shared_message1">最好用的民文翻译助手</string>
+
 </resources>

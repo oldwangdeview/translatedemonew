@@ -30,6 +30,7 @@ import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.UMShareListener;
@@ -40,6 +41,7 @@ import com.umeng.socialize.media.UMWeb;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -74,12 +76,14 @@ import translatedemo.com.translatedemo.adpater.HisotryAdpater;
 import translatedemo.com.translatedemo.base.BaseActivity;
 import translatedemo.com.translatedemo.base.BaseFragment;
 import translatedemo.com.translatedemo.bean.CollectionListbean;
+import translatedemo.com.translatedemo.bean.HistoryBean;
 import translatedemo.com.translatedemo.bean.InformationBean;
 import translatedemo.com.translatedemo.bean.InputHistoryBean;
 import translatedemo.com.translatedemo.bean.ListBean_information;
 import translatedemo.com.translatedemo.bean.StatusCode;
 import translatedemo.com.translatedemo.contans.Contans;
 import translatedemo.com.translatedemo.eventbus.TranslateEvent;
+import translatedemo.com.translatedemo.eventbus.UpdateMainIndex;
 import translatedemo.com.translatedemo.eventbus.UpdateUserEvent;
 import translatedemo.com.translatedemo.http.HttpUtil;
 import translatedemo.com.translatedemo.http.ProgressSubscriber;
@@ -111,8 +115,7 @@ public class InformationFragment extends BaseFragment {
     TextView Choice_text1;
     @BindView(R.id.choice_text2)
     TextView Choice_text2;
-    @BindArray(R.array.translate_choiceimage)
-    String[] choicedata;
+
     @BindView(R.id.input_editet)
     EditText input_editet;
     @BindArray(R.array.main_translate)
@@ -126,6 +129,9 @@ public class InformationFragment extends BaseFragment {
     @BindView(R.id.history_data)
     GridView history_data;
 
+    @BindArray(R.array.translate_choiceimage1)
+    String[] choicedata1;
+
     HisotryAdpater historyadpater;
     private Dialog mLoadingDialog;
     private ChoiceLangageDialog choicelangage1,choicelangage2;
@@ -136,7 +142,12 @@ public class InformationFragment extends BaseFragment {
     private TextView content;
     private ImageView shoucangimage;
 
+
+
+    String yiwen = "";
+
     private boolean updateinput = true;
+    private boolean settxetsize = false;
     private List<InputHistoryBean> historylistdata = new ArrayList<>();
     private List<InputHistoryBean> adpaterdata = new ArrayList<>();
     @Override
@@ -148,8 +159,8 @@ public class InformationFragment extends BaseFragment {
     protected void initData() {
         super.initData();
         EventBus.getDefault().register(this);
-        chiceadpater1 = new ChoiceLangvageAdpater(mContext,choicedata);
-        chiceadpater2 = new  ChoiceLangvageAdpater(mContext,choicedata);
+        chiceadpater1 = new ChoiceLangvageAdpater(mContext,choicedata1,UIUtils.image1);
+        chiceadpater2 = new  ChoiceLangvageAdpater(mContext,choicedata1,UIUtils.image1);
         tanslaterequest = UIUtils.inflate(mContext,R.layout.layout_translate_request);
         shoucangimage = tanslaterequest.findViewById(R.id.shouc_image);
         content = tanslaterequest.findViewById(R.id.text);
@@ -159,8 +170,8 @@ public class InformationFragment extends BaseFragment {
                 collectionDictionary(input_editet.getText().toString().trim());
             }
         });
-        Choice_text1.setText(choicedata[1]);
-        Choice_text2.setText(choicedata[0]);
+        Choice_text1.setText(choicedata1[1]);
+        Choice_text2.setText(choicedata1[0]);
         tanslaterequest.findViewById(R.id.fuzhi_image).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -178,9 +189,8 @@ public class InformationFragment extends BaseFragment {
             }
         });
 
-        if(!TextUtils.isEmpty(PreferencesUtils.getInstance().getString(Contans.INPUT_HISTORY,""))){
-            historylistdata = UIUtils.jsonToArrayList(PreferencesUtils.getInstance().getString(Contans.INPUT_HISTORY,""),InputHistoryBean.class);
-        }
+
+        gethistorydata();
         tanslaterequest.findViewById(R.id.pople_translate).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -191,7 +201,7 @@ public class InformationFragment extends BaseFragment {
         chiceadpater1.steonitemclicklister(new ListOnclickLister() {
             @Override
             public void onclick(View v, int position) {
-                Choice_text1.setText(choicedata[position]);
+                Choice_text1.setText(choicedata1[position]);
                 if(choicelangage1!=null){
                     choicelangage1.dismiss();
                 }
@@ -208,7 +218,7 @@ public class InformationFragment extends BaseFragment {
                         history_linearlayout.setVisibility(View.GONE);
                         translatedata.setVisibility(View.VISIBLE);
                     }
-                    translatedata(URLEncoder.encode(content),getoutputtype(inputdata,outputdata));
+                    translatedata(URLEncoder.encode(content),inputdata,outputdata);
                 }else{
                     data.removeAllViews();
                 }
@@ -218,7 +228,7 @@ public class InformationFragment extends BaseFragment {
         chiceadpater2.steonitemclicklister(new ListOnclickLister() {
             @Override
             public void onclick(View v, int position) {
-                Choice_text2.setText(choicedata[position]);
+                Choice_text2.setText(choicedata1[position]);
                 if(choicelangage2!=null){
                     choicelangage2.dismiss();
                 }
@@ -235,7 +245,7 @@ public class InformationFragment extends BaseFragment {
                         history_linearlayout.setVisibility(View.GONE);
                         translatedata.setVisibility(View.VISIBLE);
                     }
-                    translatedata(URLEncoder.encode(content),getoutputtype(inputdata,outputdata));
+                    translatedata(URLEncoder.encode(content),inputdata,outputdata);
 
                 }else{
                     data.removeAllViews();
@@ -247,6 +257,7 @@ public class InformationFragment extends BaseFragment {
         if(BaseActivity.getuser().isMember==0) {
             getbannerdata();
         }
+
 
         input_editet.addTextChangedListener(new TextWatcher() {
             @Override
@@ -261,20 +272,30 @@ public class InformationFragment extends BaseFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
+                String inputdata = input_editet.getText().toString().trim();
                 if(translatedata.getVisibility()==View.VISIBLE){
                     translatedata.setVisibility(View.GONE);
                     history_linearlayout.setVisibility(View.VISIBLE);
                 }
+                if(inputdata.length()>=50){
+                    if(!settxetsize) {
+                        input_editet.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, mContext.getResources().getDimensionPixelOffset(R.dimen.sp_18));
+                        settxetsize = !settxetsize;
+                    }
+                }else{
+                    if(settxetsize) {
+                        input_editet.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, mContext.getResources().getDimensionPixelOffset(R.dimen.sp_23));
+                        settxetsize = !settxetsize;
+                    }
+                }
                 if(updateinput){
-                    String inputdata = input_editet.getText().toString().trim();
                     if(historylistdata.size()>0) {
                         adpaterdata.clear();
                         if (!TextUtils.isEmpty(inputdata)) {
-
                             for (InputHistoryBean mdatas : historylistdata) {
 
                                 if(mdatas.inoutdata.indexOf(inputdata)>=0){
-                                    adpaterdata.add(0,mdatas);
+                                    adpaterdata.add(mdatas);
                                 }
                             }
                             if(adpaterdata.size()==0){
@@ -295,18 +316,18 @@ public class InformationFragment extends BaseFragment {
             }
         });
 
-        input_editet.setInputType(EditorInfo.TYPE_CLASS_TEXT);
-        input_editet.setImeOptions(EditorInfo.IME_ACTION_GO);
+//        input_editet.setInputType(EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE);
+//        input_editet.setImeOptions(EditorInfo.IME_ACTION_GO);
         input_editet.setOnEditorActionListener(mlister);
 
         tanslaterequest.findViewById(R.id.shared_image).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UMImage image = new UMImage(mContext, R.mipmap.logo);//资源文件
+                UMImage image = new UMImage(mContext, R.mipmap.shared_image_4);//资源文件
                 UMWeb web = new UMWeb(Api.Shared_LODURL);
-                web.setTitle(getResources().getString(R.string.app_name));//标题
+                web.setTitle("雅鲁翻译通"+"——"+getResources().getString(R.string.shared_message1));//标题
                 web.setThumb(image);  //缩略图
-                web.setDescription(getResources().getString(R.string.share_text_content));//描述
+                web.setDescription(TextUtils.isEmpty(mdata)?getResources().getString(R.string.share_text_content):getResources().getString(R.string.yuanwen)+input_editet.getText().toString()+" "+getResources().getString(R.string.yiwen)+mdata);//描述
                 new ShareAction(InformationFragment.this.getActivity())
                         .withMedia(web)
                         .setCallback(shareListener)
@@ -331,14 +352,6 @@ public class InformationFragment extends BaseFragment {
         history_data.setAdapter(historyadpater);
     }
 
-    private String getoutputtype(String input,String outpout){
-        String type = "";
-        if(!TextUtils.isEmpty(input)&&!TextUtils.isEmpty(outpout)){
-            type = getlangvagetype(input)+"_"+getlangvagetype(outpout);
-        }
-        return type;
-    }
-
     private void showdialog(String data){
         AlertView alertView = new AlertView("快捷翻译", data, null, null, new String[]{"取消"}, mContext, AlertView.Style.Alert, new OnItemClickListener() {
             @Override
@@ -359,90 +372,28 @@ public class InformationFragment extends BaseFragment {
            }
            return -1;
     }
-    private String getlangvagetype(String data){
-        new LogUntil(mContext,TAG,"transtinout_______:"+data);
-        new LogUntil(mContext,TAG,"transtarrlist_______:"+new Gson().toJson(choicedata));
-        String outputexttype = "";
-        for(int i=0;i<choicedata.length;i++){
-            if(data.equals(choicedata[i])){
-                switch (i){
-                    case 0:
-                        outputexttype = "bo";
-                        break;
-                    case 1:
-                        outputexttype = "zh-cn";
-                        break;
-                    case 2:
-                        outputexttype = "en";
-                        break;
-                    case 3:
-                        outputexttype = "zh-tw";
-                        break;
-                    case 4:
-                        outputexttype = "de";
-                        break;
-                    case 5:
-                        outputexttype = "fr";
-                        break;
-                    case 6:
-                        outputexttype = "es";
-                        break;
-                    case 7:
-                        outputexttype = "pt";
-                        break;
-                    case 8 :
-                        outputexttype = "it";
-                            break;
-                    case 9:
-                        outputexttype = "ru";
-                        break;
-                    case 10:
-                        outputexttype = "ja";
-                        break;
-                    case 11:
-                        outputexttype = "id";
-                        break;
-                    case 12:
-                        outputexttype = "ms";
-                        break;
-                    case 13:
-                        outputexttype = "ug";
-                        break;
 
-                }
-            }else{
-                continue;
-            }
-        }
-        new LogUntil(mContext,TAG,"transtype_______:"+outputexttype);
-        return outputexttype;
-    }
+
 
     @OnClick({R.id.choice_text1,R.id.choice_text2})
     public void choice_text(View v){
 
         switch (v.getId()){
             case R.id.choice_text1:
-
-                if (choicelangage1==null&&chiceadpater1!=null) {
-
+                if (choicelangage1!=null&&choicelangage1.isShowing()){
+                    choicelangage1.dismiss();
+                }
                     choicelangage1 = new ChoiceLangageDialog.Builder(mContext).setCanCancel(chiceadpater1).create();
-                }
-                if (!choicelangage1.isShowing()){
-
                     choicelangage1.show();
-                }
+
                 break;
             case R.id.choice_text2:
-
-                if (choicelangage2==null&&chiceadpater2!=null) {
-
+                if (choicelangage2!=null&&choicelangage2.isShowing()){
+                    choicelangage2.dismiss();
+                }
                     choicelangage2 = new ChoiceLangageDialog.Builder(mContext).setCanCancel(chiceadpater2).create();
-                }
-                if (!choicelangage2.isShowing()){
-
                     choicelangage2.show();
-                }
+
 
                 break;
         }
@@ -508,7 +459,7 @@ public class InformationFragment extends BaseFragment {
 
     }
 
-     private void translatedata(final String content,final String outputexttype){
+     private void translatedata(final String content,final String inoutdara,final String outputdata){
          new LogUntil(mContext,TAG+"content",content);
          new LogUntil(mContext,TAG+"outputexttype",outputexttype);
          getcollectionstats(content);
@@ -521,7 +472,7 @@ public class InformationFragment extends BaseFragment {
              public void run() {
                  super.run();
                  try {
-                     okPost(outputexttype,content,101);
+                     okPost(UIUtils.getlangvagetype(inoutdara,choicedata1),UIUtils.getlangvagetype(outputdata,choicedata1),content,101);
                  }catch (Exception e){
                      new LogUntil(mContext,TAG+"content",e.getMessage());
                  }
@@ -541,7 +492,7 @@ public class InformationFragment extends BaseFragment {
              public void run() {
                  super.run();
                  try {
-                     okPost("en_zh-cn",centent,102);
+                     okPost("en","zh",centent,102);
                  }catch (Exception e){
                      new LogUntil(mContext,TAG+"content",e.getMessage());
                  }
@@ -622,15 +573,26 @@ public class InformationFragment extends BaseFragment {
         super.onPause();
         mConvenientBanner.stopTurning();
     }
-     private void okPost(String outputtype, String data,final int type) throws IOException {
-        String path = "https://nmt.xmu.edu.cn/nmt"+"?lang="+outputtype+"&src="+data;
+     private void okPost(String input_type ,String outputtype, String data,final int type) throws IOException {
+//        String path = "http://sz-nmt-1.cloudtrans.org:2201/nmt"+"?lang="+outputtype+"&src="+data;
+          String path = Api.trasnslate_url+"?from="+input_type+"&to="+outputtype+"&apikey=" + Api.translate_key + "&src_text="+data;
 
+     //   new LogUntil(mContext,TAG,"path:"+path);
       OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(5, TimeUnit.MINUTES)
                 .readTimeout(5, TimeUnit.MINUTES)
                 .build();
+//         RequestBody body = new FormBody.Builder()
+//                 .add("Content-Type","application/x-www-form-urlencoded; charset=" + "utf-8")
+//                 .add("from", input_type)
+//                 .add("to", outputtype)
+//                 .add("apikey", Api.translate_key)
+//                 .add("src_text",data)
+//                 .build();
         Request request = new Request.Builder()
                 .url(path)
+//                .post(body)
+                .addHeader("Content-Type","application/x-www-form-urlencoded; charset=" + "utf-8")
                 .get()
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -643,6 +605,15 @@ public class InformationFragment extends BaseFragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String string = response.body().string();
+                try {
+                    Log.e("returnmedsage",string);
+                    JSONObject json = new JSONObject(string);
+                    if(json.has("tgt_text")){
+                        string = json.getString("tgt_text");
+
+                    }else{
+                        string = "[ERR]";
+                    }
                 Message msg = new Message();
                 msg.obj = string;
                 msg.arg1 = type;
@@ -650,8 +621,12 @@ public class InformationFragment extends BaseFragment {
                     addhistorydata(new InputHistoryBean(input_editet.getText().toString().trim(),mdata));
                 }
                 mhandler.sendMessage(msg);
+                }catch (Exception e){
+
+                }
             }
         });
+
 //        return response.body().string();
     }
 
@@ -659,28 +634,29 @@ public class InformationFragment extends BaseFragment {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             new LogUntil(mContext,TAG,actionId+"");
-            switch(actionId){
-                case EditorInfo.IME_ACTION_GO:
-                    String content = input_editet.getText().toString().trim();
-                   try {
-                       content = new String(content.getBytes(), "utf-8");
-                   }catch (Exception e){
+            if (actionId == EditorInfo.IME_ACTION_SEND
+                    || actionId == EditorInfo.IME_ACTION_DONE
+                    || (event != null && KeyEvent.KEYCODE_ENTER == event.getKeyCode() && KeyEvent.ACTION_DOWN == event.getAction())) {
+                //处理事件
+                String content = input_editet.getText().toString().trim();
+                try {
+                    content = new String(content.getBytes(), "utf-8");
+                }catch (Exception e){
 
-                   }
-                   String inputdata = Choice_text1.getText().toString().trim();
-                   String outputdata = Choice_text2.getText().toString().trim();
-                    if(history_linearlayout.getVisibility()==View.VISIBLE){
-                        history_linearlayout.setVisibility(View.GONE);
-                        translatedata.setVisibility(View.VISIBLE);
-                    }
-                   if(!TextUtils.isEmpty(content)&&!TextUtils.isEmpty(inputdata)&&!TextUtils.isEmpty(outputdata)){
-                       translatedata(URLEncoder.encode(content),getoutputtype(inputdata,outputdata));
-                   }else{
-                       data.removeAllViews();
-                   }
-                    break;
+                }
+                String inputdata = Choice_text1.getText().toString().trim();
+                String outputdata = Choice_text2.getText().toString().trim();
+                if(history_linearlayout.getVisibility()==View.VISIBLE){
+                    history_linearlayout.setVisibility(View.GONE);
+                    translatedata.setVisibility(View.VISIBLE);
+                }
+                if(!TextUtils.isEmpty(content)&&!TextUtils.isEmpty(inputdata)&&!TextUtils.isEmpty(outputdata)){
+                    translatedata(URLEncoder.encode(content),inputdata,outputdata);
+                }else{
+                    data.removeAllViews();
+                }
             }
-                return true;
+            return true;
         }
     };
 
@@ -756,7 +732,15 @@ public class InformationFragment extends BaseFragment {
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void setdata(CollectionListbean mdata) {
+
         input_editet.setText(mdata.content);
+        Message msg = new Message();
+        msg.arg1 = 101;
+        if(!TextUtils.isEmpty(mdata.translateContent)) {
+            msg.obj = mdata.translateContent;
+        }
+        updateinput = false;
+        mhandler.sendMessage(msg);
     }
 
     private UMShareListener shareListener = new UMShareListener() {
@@ -881,27 +865,36 @@ public class InformationFragment extends BaseFragment {
     public void totranslate(TranslateEvent event){
         input_editet.setText(event.data);
 
-            Choice_text1.setText(choicedata[2]);
-            Choice_text2.setText(choicedata[1]);
+            Choice_text1.setText(choicedata1[PreferencesUtils.getInstance().getInt(Contans.INPUT_STRING,2)]);
+            Choice_text2.setText(choicedata1[PreferencesUtils.getInstance().getInt(Contans.OUTPUT_STRING,1)]);
 
-        String content = input_editet.getText().toString().trim();
-        try {
-            content = new String(content.getBytes(), "utf-8");
-        }catch (Exception e){
+        String mcontent = input_editet.getText().toString().trim();
+        if(TextUtils.isEmpty(event.requestdata)) {
+            try {
+                mcontent = new String(mcontent.getBytes(), "utf-8");
+            } catch (Exception e) {
 
-        }
-        String inputdata = Choice_text1.getText().toString().trim();
-        String outputdata = Choice_text2.getText().toString().trim();
-        if(!TextUtils.isEmpty(content)&&!TextUtils.isEmpty(inputdata)&&!TextUtils.isEmpty(outputdata)){
+            }
+            String inputdata = Choice_text1.getText().toString().trim();
+            String outputdata = Choice_text2.getText().toString().trim();
+            if (!TextUtils.isEmpty(mcontent) && !TextUtils.isEmpty(inputdata) && !TextUtils.isEmpty(outputdata)) {
+                if (history_linearlayout.getVisibility() == View.VISIBLE) {
+                    history_linearlayout.setVisibility(View.GONE);
+                    translatedata.setVisibility(View.VISIBLE);
+                }
+                translatedata(URLEncoder.encode(mcontent), inputdata, outputdata);
+            } else {
+                data.removeAllViews();
+            }
+
+        }else{
             if(history_linearlayout.getVisibility()==View.VISIBLE){
                 history_linearlayout.setVisibility(View.GONE);
                 translatedata.setVisibility(View.VISIBLE);
             }
-            translatedata(URLEncoder.encode(content),getoutputtype(inputdata,outputdata));
-        }else{
-            data.removeAllViews();
+            layoutContent(content," "+event.requestdata+" ");
+            data.addView(tanslaterequest);
         }
-
     }
 
 
@@ -958,17 +951,67 @@ public class InformationFragment extends BaseFragment {
     }
 
     public void addhistorydata(InputHistoryBean data){
-        if(historylistdata.size()>0){
-            for(InputHistoryBean mdata:historylistdata){
-                if(mdata.inoutdata.equals(data.inoutdata)){
-                    historylistdata.remove(mdata);
+        historylistdata.add(0,data);
+        savedata(data.inoutdata,data.outputdata); }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void getupdateindex(UpdateMainIndex event){
+        if(event.index==3){
+            input_editet.setText("");
+        }
+    }
+
+
+
+    private void savedata(String inputdata,String outputdata){
+        Observable observable =
+                ApiUtils.getApi().addTranslateRecord(BaseActivity.getLanguetype(mContext),BaseActivity.getuser().id+"",1,inputdata,outputdata)
+                        .compose(RxHelper.getObservaleTransformer())
+                        .subscribeOn(AndroidSchedulers.mainThread());
+
+        HttpUtil.getInstance().toSubscribe(observable, new ProgressSubscriber<Object>(mContext) {
+            @Override
+            protected void _onNext(StatusCode<Object> stringStatusCode) {
+
+
+
+            }
+
+            @Override
+            protected void _onError(String message) {
+
+            }
+        }, "", lifecycleSubject, false, true);
+    }
+
+
+    private void gethistorydata(){
+        Observable observable =
+                ApiUtils.getApi().getTranslateRecord(BaseActivity.getLanguetype(mContext),BaseActivity.getuser().id+"",1,10000,0)
+                        .compose(RxHelper.getObservaleTransformer())
+                        .subscribeOn(AndroidSchedulers.mainThread());
+
+        HttpUtil.getInstance().toSubscribe(observable, new ProgressSubscriber<HistoryBean>(mContext) {
+            @Override
+            protected void _onNext(StatusCode<HistoryBean> stringStatusCode) {
+
+
+                if(stringStatusCode.getData()!=null&&stringStatusCode.getData().list.size()>0){
+                    new LogUntil(mContext,TAG,"historydarta"+new Gson().toJson(stringStatusCode));
+
+                 for(int i = 0;i<stringStatusCode.getData().list.size();i++){
+                     InputHistoryBean data = new InputHistoryBean(stringStatusCode.getData().list.get(i).content,stringStatusCode.getData().list.get(i).translateContent);
+                 }
                 }
             }
-            historylistdata.add(0,data);
-        }else{
-            historylistdata.add(data);
-        }
-        PreferencesUtils.getInstance().putString(Contans.INPUT_HISTORY,new Gson().toJson(historylistdata));
+
+            @Override
+            protected void _onError(String message) {
+
+            }
+        }, "", lifecycleSubject, false, true);
     }
+
+
+
 
 }

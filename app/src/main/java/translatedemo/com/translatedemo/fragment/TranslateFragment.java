@@ -62,6 +62,7 @@ import translatedemo.com.translatedemo.contans.Contans;
 import translatedemo.com.translatedemo.eventbus.OverMainactivty;
 import translatedemo.com.translatedemo.eventbus.UpdataInfomation;
 import translatedemo.com.translatedemo.eventbus.UpdateMainIndex;
+import translatedemo.com.translatedemo.eventbus.UpdateScrooEvent;
 import translatedemo.com.translatedemo.http.HttpUtil;
 import translatedemo.com.translatedemo.http.ProgressSubscriber;
 import translatedemo.com.translatedemo.http.RxHelper;
@@ -87,7 +88,7 @@ public class TranslateFragment extends BaseFragment {
 
     @BindView(R.id.yrecycleview_)
     YRecycleview yrecycleview_;
-    private LoadingPagerHead mLoadingPagerHead;
+//    private LoadingPagerHead mLoadingPagerHead;
     private View mHeadView;
     private TranslateAdpater madpater;
     public List<ListBean_information> list = new ArrayList<>();
@@ -101,29 +102,13 @@ public class TranslateFragment extends BaseFragment {
 
     @Override
     public View initView(Context context) {
-        mLoadingPagerHead = new LoadingPagerHead(context) {
-            @Override
-            protected void close() {
 
-            }
-
-            @Override
-            protected View createSuccessView() {
-                return UIUtils.inflate(mContext, R.layout.fragment_translate);
-            }
-
-            @Override
-            protected void reLoading() {
-                retry(false);
-
-            }
-        };
 
         mHeadView = UIUtils.inflate(context, R.layout.headview_translatefragemt);
         choice_fytype = mHeadView.findViewById(R.id.choice_fytype);
         mConvenientBanner = mHeadView.findViewById(R.id.id_cb);
         banner_relativelayout = mHeadView.findViewById(R.id.banner_relativelayout);
-        return mLoadingPagerHead;
+        return UIUtils.inflate(mContext, R.layout.fragment_translate);
     }
 
 
@@ -147,7 +132,7 @@ public class TranslateFragment extends BaseFragment {
             }
         });
         madpater = new TranslateAdpater(mContext, list);
-        mLoadingPagerHead.showPagerView(Contans.STATE_SUCCEED);
+//        mLoadingPagerHead.showPagerView(Contans.STATE_SUCCEED);
         yrecycleview_.setLayoutManager(new LinearLayoutManager(mContext));
         yrecycleview_.setItemAnimator(new DefaultItemAnimator());
         yrecycleview_.setRefreshAndLoadMoreListener(mlister);
@@ -201,7 +186,7 @@ public class TranslateFragment extends BaseFragment {
             protected void _onNext(StatusCode<InformationBean> stringStatusCode) {
                 new LogUntil(mContext,TAG+"zixunmessage",new Gson().toJson(stringStatusCode));
                 LoadingDialogUtils.closeDialog(mLoadingDialog);
-                mLoadingPagerHead.showPagerView(Contans.STATE_SUCCEED);
+//                mLoadingPagerHead.showPagerView(Contans.STATE_SUCCEED);
                 if(stringStatusCode.getCode()==0&&stringStatusCode.getData()!=null) {
                     if (!type) {
                         list.clear();
@@ -211,11 +196,13 @@ public class TranslateFragment extends BaseFragment {
                     }
                     list.addAll(stringStatusCode.getData().list);
                     madpater.notifyDataSetChanged();
+                    PreferencesUtils.getInstance().putString("main_listdata",new Gson().toJson(stringStatusCode.getData()));
                 }
             }
 
             @Override
             protected void _onError(String message) {
+
                 if (!type) {
                     yrecycleview_.setReFreshComplete();
                 }else{
@@ -223,7 +210,24 @@ public class TranslateFragment extends BaseFragment {
                 }
                 ToastUtils.makeText(message);
                 LoadingDialogUtils.closeDialog(mLoadingDialog);
-                mLoadingPagerHead.showPagerView(Contans.STATE_ERROR);
+                String listdata = PreferencesUtils.getInstance().getString("main_listdata","");
+                        if(!TextUtils.isEmpty(listdata)){
+                            if(contentpage>1){
+                                return;
+                            }
+                            InformationBean data = new Gson().fromJson(listdata,InformationBean.class);
+                            if(data!=null) {
+                                if (!type) {
+                                    list.clear();
+                                    yrecycleview_.setReFreshComplete();
+                                }else{
+                                    yrecycleview_.setloadMoreComplete();
+                                }
+                                list.addAll(data.list);
+                                madpater.notifyDataSetChanged();
+                            }
+                        }
+
             }
         }, "", lifecycleSubject, false, true);
     }
@@ -255,6 +259,7 @@ public class TranslateFragment extends BaseFragment {
             protected void _onNext(StatusCode<InformationBean> stringStatusCode) {
                 new LogUntil(mContext,TAG+"zixunmessage",new Gson().toJson(stringStatusCode));
                 LoadingDialogUtils.closeDialog(mLoadingDialog);
+                PreferencesUtils.getInstance().putString("maindata",new Gson().toJson(stringStatusCode.getData()));
                 if(stringStatusCode.getData()!=null&&stringStatusCode.getData().list.size()>0) {
                     List<ListBean_information> adsBeans = stringStatusCode.getData().list;
                     if (adsBeans != null && adsBeans.size() > 0) {
@@ -267,6 +272,7 @@ public class TranslateFragment extends BaseFragment {
                         }, adsBeans)
                                 .setPageIndicatorAlign(ConvenientBanner.PageIndicatorAlign.CENTER_HORIZONTAL); //设置指示器的方向水平  居中
                     }else{
+                        mConvenientBanner.setVisibility(View.GONE);
                         banner_relativelayout.setVisibility(View.GONE);
                     }
                     if (adsBeans.size() == 1) {
@@ -283,6 +289,31 @@ public class TranslateFragment extends BaseFragment {
 
                 ToastUtils.makeText(message);
                 LoadingDialogUtils.closeDialog(mLoadingDialog);
+                String maindata = PreferencesUtils.getInstance().getString("maindata","");
+                if(!TextUtils.isEmpty(maindata)){
+                    InformationBean data = new Gson().fromJson(maindata,InformationBean.class);
+                    if(data!=null&&data.list.size()>0) {
+                        List<ListBean_information> adsBeans =data.list;
+                        if (adsBeans != null && adsBeans.size() > 0) {
+                            banner_relativelayout.setVisibility(View.VISIBLE);
+                            mConvenientBanner.setPages(new CBViewHolderCreator<ImageViewHolder>() {
+                                @Override
+                                public ImageViewHolder createHolder() {
+                                    return new ImageViewHolder();
+                                }
+                            }, adsBeans)
+                                    .setPageIndicatorAlign(ConvenientBanner.PageIndicatorAlign.CENTER_HORIZONTAL); //设置指示器的方向水平  居中
+                        }else{
+                            mConvenientBanner.setVisibility(View.GONE);
+                            banner_relativelayout.setVisibility(View.GONE);
+                        }
+                        if (adsBeans.size() == 1) {
+                            mConvenientBanner.setPointViewVisible(false);
+                        } else {
+                            mConvenientBanner.setPointViewVisible(true);
+                        }
+                    }
+                }
 
             }
         }, "", lifecycleSubject, false, true);
@@ -464,13 +495,19 @@ public class TranslateFragment extends BaseFragment {
             //点击其他地方隐藏,false为无反应
             mPopupWindow.setFocusable(true);
         }
-        madpater11.notifyDataSetChanged();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            //对他进行便宜
-            mPopupWindow.showAsDropDown(view, -10, 50, Gravity.BOTTOM);
-        }
-        //对popupWindow进行显示
-        mPopupWindow.update();
+        if(madpater11!=null) {
+            madpater11.notifyDataSetChanged();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                //对他进行便宜
+                mPopupWindow.showAsDropDown(view, -10, 50, Gravity.BOTTOM);
+            }
+            //对popupWindow进行显示
+            mPopupWindow.update();
 
+        }
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void finishMainactivity(UpdateScrooEvent over){
+        yrecycleview_.setScrollY(0);
     }
 }

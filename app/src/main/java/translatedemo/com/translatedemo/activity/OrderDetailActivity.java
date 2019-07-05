@@ -34,6 +34,7 @@ import translatedemo.com.translatedemo.bean.MemberListBean;
 import translatedemo.com.translatedemo.bean.StatusCode;
 import translatedemo.com.translatedemo.bean.WeChartPayben;
 import translatedemo.com.translatedemo.contans.Contans;
+import translatedemo.com.translatedemo.eventbus.UpdateUserEvent;
 import translatedemo.com.translatedemo.eventbus.WeChartPayEvent;
 import translatedemo.com.translatedemo.http.HttpUtil;
 import translatedemo.com.translatedemo.http.ProgressSubscriber;
@@ -244,7 +245,7 @@ public class OrderDetailActivity extends BaseActivity {
         if(event!=null) {
             order_xzyhq.setText("¥"+event.reducePrice+"");
             yhqid = event.id+"";
-            order_ddmoney.setText("¥"+(mdata.amount-event.reducePrice));
+            order_ddmoney.setText("¥"+((mdata.amount-event.reducePrice)>0?(String.format("%.2f",mdata.amount-event.reducePrice)):0));
         }
     }
     private void payforali(final String orderinfo) {
@@ -310,6 +311,11 @@ public class OrderDetailActivity extends BaseActivity {
                 break;
         }
     }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void finishactivity(UpdateUserEvent event){
+        finish();
+    }
+
     @OnClick({R.id.iv_back_activity_text,R.id.iv_back_activity_basepersoninfo})
     public void finishactivity(){
         finish();

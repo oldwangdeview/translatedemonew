@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -75,7 +76,7 @@ public class MenberCenterActivity extends BaseActivity {
     TextView content;
 
     @BindView(R.id.cd_recyclerview)
-    MyGridView titlerecyclerview;
+    RecyclerView titlerecyclerview;
 
     List<MemberListBean> listdata = new ArrayList<>();
     private MemberCenterAdpater madpater;
@@ -153,7 +154,11 @@ public class MenberCenterActivity extends BaseActivity {
 
 
         madpater1 = new MenberAdpater(mcontent,listdatacd);
-
+        titlerecyclerview.setItemAnimator( new DefaultItemAnimator());
+        titlerecyclerview.setLayoutManager(new GridLayoutManager(mcontent,3));
+//        titlerecyclerview.addItemDecoration(new Reco);
+        titlerecyclerview.setHasFixedSize(true);
+        titlerecyclerview.setNestedScrollingEnabled(false);
         titlerecyclerview.setAdapter(madpater1);
 
         getdictionary();
@@ -260,6 +265,10 @@ public class MenberCenterActivity extends BaseActivity {
         }, "", lifecycleSubject, false, true);
     }
 
+    @OnClick(R.id.member_text_xy)
+    public void gotohyfuxy(){
+        UserAgreementActivity.statrtactivity(this,5);
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void uodateuser( UpdateUserEvent uodate){
@@ -269,5 +278,10 @@ public class MenberCenterActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void finishactivity(UpdateUserEvent event){
+        finish();
     }
 }

@@ -50,10 +50,13 @@ public interface Contans {
     String GOODS_SOLD_OUT="该商品已下架";
     String STORE_SOLD_OUT="该店铺已下架";
     String INPUT_HISTORY = "inputhistory";
+    String TRANSLATE_HISTORY = "translate_history";
 
     /**AESkey*/
     String AESKey="scmsw76449880330";
     int cow = 20;
+    String INPUT_STRING = "input_string";
+    String OUTPUT_STRING = "out_string";
 
 //    boolean banertype = f
 

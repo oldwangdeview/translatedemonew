@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
+import com.google.gson.Gson;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
@@ -51,20 +53,10 @@ public class WXPayEntryActivity extends AppCompatActivity implements IWXAPIEvent
 
     @Override
     public void onResp(BaseResp resp) {
-        ToastUtils.makeText("支付返回码"+resp.errCode);
+        Log.e("weixinpay",new Gson().toJson(resp));
         EventBus.getDefault().post(new WeChartPayEvent(resp.errCode));
-//        if (resp.errCode == 0) {
-////                       ToastUtils.makeText("支付成功");
-//                       finish();
-//                   } else if (resp.errCode == -2) {
-//                       //用户取消
-////                       ToastUtils.makeText("取消支付");
-//                       finish();
-//                   } else if (resp.errCode == -1) {
-//                       //支付失败
-////                       ToastUtils.makeText("支付失败");
-//                       finish();
-//        }
+        finish();
+
 
     }
 }

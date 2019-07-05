@@ -8,15 +8,19 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.*;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import butterknife.BindArray;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -24,8 +28,11 @@ import okhttp3.Request;
 import okhttp3.Response;
 import translatedemo.com.translatedemo.R;
 import translatedemo.com.translatedemo.activity.TransDataActivty;
+import translatedemo.com.translatedemo.contans.Contans;
 import translatedemo.com.translatedemo.interfice.Translateinterfice;
+import translatedemo.com.translatedemo.rxjava.Api;
 import translatedemo.com.translatedemo.util.LogUntil;
+import translatedemo.com.translatedemo.util.PreferencesUtils;
 import translatedemo.com.translatedemo.util.ToastUtils;
 import translatedemo.com.translatedemo.util.UIUtils;
 
@@ -44,6 +51,10 @@ public final class TipViewController implements View.OnClickListener, View.OnTou
 
     private TextView returndata_text;
     private Translateinterfice mlister;
+    private TextView translate_title_type;
+
+//    String[] choicedata;
+    String[] choicedata1;
     public TipViewController(Context application, CharSequence content) {
         mContext = application;
         mContent = content;
@@ -55,6 +66,8 @@ public final class TipViewController implements View.OnClickListener, View.OnTou
         mContent = content;
         this.mlister=mliste;
         this.returndata = returndata;
+//        choicedata = application.getResources().getStringArray(R.array.translate_choiceimage);
+        choicedata1= application.getResources().getStringArray(R.array.translate_choiceimage1);
         mWindowManager = (WindowManager) application.getSystemService(Context.WINDOW_SERVICE);
     }
 
@@ -70,14 +83,13 @@ public final class TipViewController implements View.OnClickListener, View.OnTou
         mContent = content;
         this.returndata = returndata;
         returndata_text.setText(returndata);
+        translate_title_type.setText(choicedata1[PreferencesUtils.getInstance().getInt(Contans.INPUT_STRING,2)]+"->"+choicedata1[PreferencesUtils.getInstance().getInt(Contans.OUTPUT_STRING,1)]);
         mTextView.setText(mContent);
         int w = WindowManager.LayoutParams.MATCH_PARENT;
         int h = WindowManager.LayoutParams.MATCH_PARENT;
 
         int flags = 0;
         int type = 0;
-//        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(w, h, type, flags, PixelFormat.TRANSLUCENT);
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
@@ -94,7 +106,11 @@ public final class TipViewController implements View.OnClickListener, View.OnTou
                 mContext.startActivity(intent);
                 return;
             } else {
-                mWindowManager.addView(mWholeView, layoutParams);
+                try {
+                    mWindowManager.addView(mWholeView, layoutParams);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         } else {
             //Android6.0以下，不用动态声明权限
@@ -110,6 +126,8 @@ public final class TipViewController implements View.OnClickListener, View.OnTou
 
         // display content
         mTextView = (TextView) view.findViewById(R.id.pop_view_text);
+        translate_title_type = view.findViewById(R.id.translate_title_type);
+        translate_title_type.setText(choicedata1[PreferencesUtils.getInstance().getInt(Contans.INPUT_STRING,2)]+"->"+choicedata1[PreferencesUtils.getInstance().getInt(Contans.OUTPUT_STRING,1)]);
         mTextView.setText(mContent);
         pop_view_content_view = view.findViewById(R.id.pop_view_content_view);
         mWholeView = view;
@@ -126,7 +144,7 @@ public final class TipViewController implements View.OnClickListener, View.OnTou
         view.findViewById(R.id.moredata).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mlister.evntbustomessage(mContent.toString());
+                mlister.evntbustomessage(mContent.toString(),returndata);
                 removePoppedViewAndClear();
             }
         });
@@ -228,7 +246,7 @@ public final class TipViewController implements View.OnClickListener, View.OnTou
             public void run() {
                 super.run();
                 try {
-                    okPost("en_zh-cn",centent,102);
+                    okPost("en","zh",centent,102);
                 }catch (Exception e){
                     new LogUntil(mContext,"content",e.getMessage());
                 }
@@ -258,15 +276,19 @@ public final class TipViewController implements View.OnClickListener, View.OnTou
         }
     };
 
-    private void okPost(String outputtype, String data,final int type) throws IOException {
-        String path = "https://nmt.xmu.edu.cn/nmt"+"?lang="+outputtype+"&src="+data;
+    private void okPost(String input_type ,String outputtype, String data,final int type) throws IOException {
+//        String path = "http://sz-nmt-1.cloudtrans.org:2201/nmt"+"?lang="+outputtype+"&src="+data;
+        String path = Api.trasnslate_url+"?from="+input_type+"&to="+outputtype+"&apikey=" + Api.translate_key + "&src_text="+data;
 
+        //   new LogUntil(mContext,TAG,"path:"+path);
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(5, TimeUnit.MINUTES)
                 .readTimeout(5, TimeUnit.MINUTES)
                 .build();
         Request request = new Request.Builder()
                 .url(path)
+//                .post(body)
+                .addHeader("Content-Type","application/x-www-form-urlencoded; charset=" + "utf-8")
                 .get()
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -279,15 +301,26 @@ public final class TipViewController implements View.OnClickListener, View.OnTou
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String string = response.body().string();
-                Message msg = new Message();
-                msg.obj = string;
-                msg.arg1 = type;
-                mmhander.sendMessage(msg);
+                try {
+                    Log.e("returnmedsage",string);
+                    JSONObject json = new JSONObject(string);
+                    if(json.has("tgt_text")){
+                        string = json.getString("tgt_text");
+
+                    }else{
+                        string = "[ERR]";
+                    }
+                    Message msg = new Message();
+                    msg.obj = string;
+                    msg.arg1 = type;
+                    mmhander.sendMessage(msg);
+                }catch (Exception e){
+
+                }
             }
         });
 //        return response.body().string();
     }
-
     @Override
     public void onKeyEvent(KeyEvent event) {
         int keyCode = event.getKeyCode();

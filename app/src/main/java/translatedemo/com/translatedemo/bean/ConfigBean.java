@@ -18,4 +18,8 @@ public class ConfigBean implements Serializable {
     public String createTime;
     public long status;
 
+    public String email;
+    public String qq;
+    public String weixin;
+
 }

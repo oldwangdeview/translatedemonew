@@ -123,7 +123,7 @@ public class SetingActivty extends BaseActivity {
 //                    .build();
 //        }
 //        mdialog.show();
-        AlertView alertView = new AlertView(getResources().getString(R.string.help), getResources().getString(R.string.dialog_message), null, null, new String[]{getResources().getString(R.string.translate_text_quxiao), getResources().getString(R.string.translate_text_qued)}, this, AlertView.Style.Alert, new OnItemClickListener() {
+        AlertView alertView = new AlertView("帮助", "是否退出登录", null, null, new String[]{"取消", "确定"}, this, AlertView.Style.Alert, new OnItemClickListener() {
             @Override
             public void onItemClick(Object o, int position) {
                 if (position==1){

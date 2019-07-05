@@ -184,6 +184,7 @@ public abstract class LoadingPagerHead extends FrameLayout {
         if (null != mEmptyView) {
             mEmptyView.setVisibility(state == STATE_EMPTY ? View.VISIBLE
                     : View.INVISIBLE);
+            nomoremessage.setText(mContext.getResources().getString(R.string.nomessage));
         }
 
         if (null != mSucceedView) {
@@ -206,6 +207,7 @@ public abstract class LoadingPagerHead extends FrameLayout {
      *
      * @return
      */
+    TextView nomoremessage ;
     public View createEmptyView() {
         //iv_back_loadpage_empty
         View inflate = UIUtils.inflate(R.layout.loadpage_empty);
@@ -225,6 +227,7 @@ public abstract class LoadingPagerHead extends FrameLayout {
             frameLayout.addView(contentView);
         }else {
             View inflate1 = UIUtils.inflate(R.layout.layout_default_empy_content);
+            nomoremessage = inflate1.findViewById(R.id.nomoremessage);
             frameLayout.addView(inflate1);
         }
         return inflate;

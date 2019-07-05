@@ -3,6 +3,8 @@ package translatedemo.com.translatedemo.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -30,6 +32,7 @@ public class ChoiceLanguageActivity extends BaseActivity{
 
     @OnClick({R.id.chunaese,R.id.zangwen})
     public void onclick(View view){
+        BaseActivity.LAGEVAGETYPE = -1;
         SharedPreferences preferences = getSharedPreferences("language", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
       switch (view.getId()){
@@ -44,13 +47,16 @@ public class ChoiceLanguageActivity extends BaseActivity{
         editor.apply();
       if(type>0) {
           EventBus.getDefault().post(new OverMainactivty());
+          if(BaseActivity.getuser()!=null){
+              MainActivity.startactivity(ChoiceLanguageActivity.this,1);
+          }else {
+              LoginActivity.startactivity(ChoiceLanguageActivity.this);
+          }
+          finish();
+
       }
-      if(BaseActivity.getuser()!=null){
-          MainActivity.startactivity(this,1);
-      }else {
-          LoginActivity.startactivity(this);
-      }
-        finish();
+
+
     }
 
     @Override

@@ -75,7 +75,7 @@ public class GetCouponAdpater extends BaseRecycleAdapter<GetCouponListBean> {
                 rq.setText(UIUtils.gettime(mContext.getResources().getString(R.string.getcoupon_text_rq)+s.endTime));
             }
         }else{
-                rq.setText(s.day+" 天后过期");
+                rq.setText(mContext.getResources().getString(R.string.titem_over).replace("%",s.day+""));
 
         }
 

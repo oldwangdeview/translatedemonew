@@ -206,6 +206,12 @@ public class GetCouponActivty  extends BaseActivity {
         }, "", lifecycleSubject, false, true);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+//        MycouponActivity.startactivity(this);
+    }
+
     public static void startactivity(Context mContext){
         Intent mIntent = new Intent(mContext,GetCouponActivty.class);
         mContext.startActivity(mIntent);

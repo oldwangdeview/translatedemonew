@@ -6,18 +6,26 @@ import java.util.List;
 import io.reactivex.Observable;
 import okhttp3.MultipartBody;
 import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 import translatedemo.com.translatedemo.bean.CollectionBean;
 import translatedemo.com.translatedemo.bean.ConfigBean;
 import translatedemo.com.translatedemo.bean.DictionaryBean;
 import translatedemo.com.translatedemo.bean.DucationBean;
 import translatedemo.com.translatedemo.bean.FeedBackBean;
+import translatedemo.com.translatedemo.bean.FlashBannerBean;
 import translatedemo.com.translatedemo.bean.GetCouponListBean;
 import translatedemo.com.translatedemo.bean.HelpDataBean;
+import translatedemo.com.translatedemo.bean.HistoryBean;
+import translatedemo.com.translatedemo.bean.HistoryBean2;
 import translatedemo.com.translatedemo.bean.InformationBean;
 import translatedemo.com.translatedemo.bean.LanguageBean;
 import translatedemo.com.translatedemo.bean.ListBean_information;
@@ -38,20 +46,28 @@ public interface Api {
     /**发布地址*/
     String baseUrl="http://120.79.136.125/";
     /**测试地址*/
-     String testBaseUrl="http://39.104.188.55:8001/";
+     String testBaseUrl="https://fanyitong.yaludata.com/";
 
-     String Shared_LODURL = "http://39.104.188.55:8001/manage/system/download";
+     String Shared_LODURL = "https://fanyitong.yaludata.com/manage/system/download";
+
+     String translate_key = "a9dffd14d44d2e1201417a19ddfec2f8";
+     String trasnslate_url = "http://api.niutrans.vip/NiuTransServer/translation";
      @POST("/user/thridLogin")
      Observable<StatusCode<LoginBean>> thridLogin(
              @Query("weixinOpenid") String weixinOpenid,
              @Query("languageType") String languageType,
              @Query("deviceId")String deviveid);
 
+
+
     @POST("/user/thridLogin")
     Observable<StatusCode<LoginBean>> thridLogin1(
             @Query("qqOpenid")String qqOpenid,
             @Query("languageType") String languageType,
             @Query("deviceId")String deviveid);
+
+
+
     /**
      * 获取系统配置
      * @param type 1关于我们 2注册协议
@@ -62,13 +78,17 @@ public interface Api {
      Observable<StatusCode<ConfigBean>> getconfig(
              @Query("type") int type,
              @Query("languageType") int languageType);
+
+
      /**
       * 获取用户信息
       */
      @GET("/user/getInfo")
      Observable<StatusCode<LoginBean>> getuserinfo(
-             @Query("id") String weixinOpenid,
+             @Query("userId") String weixinOpenid,
              @Query("languageType") int languageType);
+
+
 
     /**
      * 第三方注册
@@ -94,6 +114,8 @@ public interface Api {
              @Query("phone") String phone,
              @Query("deviceId") String deviceId);
 
+
+
     /**手机号登录**/
     @POST("user/login")
     Observable<StatusCode<LoginBean>> loginforphone(
@@ -101,6 +123,8 @@ public interface Api {
             @Query("code")String code,
             @Query("languageType") int languageType,
             @Query("deviceId")String deviceId);
+
+
 
     /**
      * 获取资讯
@@ -120,6 +144,7 @@ public interface Api {
 
 
 
+
     /**
      * 咨询赞
      * @param languageType
@@ -135,6 +160,7 @@ public interface Api {
             @Query("type") int type,
             @Query("userId")String userId);
 
+
     /**
      * 获取咨询详情
      * @param languageType
@@ -147,6 +173,7 @@ public interface Api {
             @Query("languageType") int languageType,
             @Query("informationId")int informationId,
             @Query("userId")String userId);
+
 
 
     /**
@@ -165,6 +192,7 @@ public interface Api {
     Observable<StatusCode<List<GetCouponListBean>>> getWaitReceiveCouponList(
             @Query("userId") String userId);
 
+
     /**
      * 领取优惠券
      * @param id
@@ -175,6 +203,7 @@ public interface Api {
             @Query("id") String id,
             @Query("userId") String userId,
             @Query("languageType")int languageType);
+
 
     /**
      * 优惠券列表
@@ -187,11 +216,13 @@ public interface Api {
             @Query("userId") String userId,
             @Query("languageType")int languageType);
 
+
     @GET("/user/getNotifykList")
     Observable<StatusCode<NoticeBean>> getNotifykList(
             @Query("page") int page,
             @Query("size") int size,
             @Query("languageType")int languageType);
+
 
     /***
      * 修改用户信息
@@ -206,6 +237,7 @@ public interface Api {
             @Query("educationId")String educationId,
             @Query("languageType")int languageType,
             @Part MultipartBody.Part imgs);
+
     @POST("/user/editUserInfo")
     Observable<StatusCode<LoginBean>> editUserInfo(
             @Query("id") int id,
@@ -215,11 +247,14 @@ public interface Api {
             @Query("educationId")String educationId,
             @Query("languageType")int languageType);
 
+
     /**
      * 获取学历信息
      */
     @GET("/user/getDucation")
-    Observable<StatusCode<List<DucationBean>>> getDucation( @Query("languageType")int languageType);
+    Observable<StatusCode<List<DucationBean>>> getDucation(
+            @Query("languageType")int languageType
+    );
 
     /**
      * 反馈
@@ -236,6 +271,7 @@ public interface Api {
             @Query("content") String content,
             @Query("languageType")int languageType,
             @Part List<MultipartBody.Part> imgs);
+
     @POST("/user/feedback")
     Observable<StatusCode<FeedBackBean>> uplodefeedback(
             @Query("userId") int userId,
@@ -258,11 +294,6 @@ public interface Api {
      * 获取所有词典
      */
 
-//    @GET("/dictionary/getAllDictionary")
-//    Observable<StatusCode<List<DictionaryBean>>> getAllDictionary(
-//            @Query("userId") String userId,
-//            @Query("languageType")int languageType
-//           );
     @GET("/dictionary/getAllDictionary")
     Observable<StatusCode<List<DictionaryBean>>> getAllDictionary(
             @Query("userId") String userId,
@@ -280,6 +311,14 @@ public interface Api {
 
     @GET("/dictionary/translateFromThree")
     Observable<StatusCode<ThreeTranslateBean>> translateFromThree(
+            @Query("content") String content,
+            @Query("languageType")int languageType,
+            @Query("userId") String userId,
+            @Query("type")int type
+    );
+
+    @GET("/dictionary/translateFromThree")
+    Observable<StatusCode<List<ThreeTranslateBean>>> translateFromThree1(
             @Query("content") String content,
             @Query("languageType")int languageType,
             @Query("userId") String userId,
@@ -320,16 +359,19 @@ public interface Api {
             @Query("isWord")String isWord
     );
 
+    @FormUrlEncoded
     @POST("/dictionary/collectionDictionary")
+    @Headers("Content-Type:application/x-www-form-urlencoded; charset=utf-8")
     Observable<StatusCode<Object>> collectionDictionary(
-            @Query("languageType")int languageType,
-            @Query("userId")String userId,
-            @Query("type")int type,
-            @Query("content")String content,
-            @Query("translateContent")String translateContent,
-            @Query("dictionaryId")String dictionaryId,
-            @Query("isWord")String isWord,
-            @Query("collectType") int sctype
+            @Field("languageType") int languageType,
+            @Field("userId")String userId,
+            @Field("type")int type,
+            @Field("content")String content,
+            @Field("translateContent")String translateContent,
+            @Field("dictionaryId")String dictionaryId,
+            @Field("isWord")String isWord,
+            @Field("collectType") int sctype
+
     );
     /**
      * 获取收藏
@@ -358,6 +400,21 @@ public interface Api {
     );
 
 
+    @GET("/user/getCode")
+    Observable<StatusCode<Object>> getCode(
+            @Query("phone") String phone,
+            @Query("type" )int type,
+            @Query("newPhone") String newphone
+    );
+
+    @GET("/user/getCode")
+    Observable<StatusCode<Object>> getCode(
+            @Query("phone") String phone,
+            @Query("type" )int type
+    );
+
+
+
     /**
      * 创建订单信息
      */
@@ -369,6 +426,7 @@ public interface Api {
             @Query("payType") String payType
 
     );
+
     @POST("/pay/createOrder")
     Observable<StatusCode<String>> createOrder(
             @Query("userId") String userId,
@@ -376,6 +434,7 @@ public interface Api {
             @Query("payType") String payType
 
     );
+
 
     /**
      * 支付获取可使用的优惠券列表
@@ -387,6 +446,9 @@ public interface Api {
             @Query("languageType") String languageType
 
     );
+
+
+
 
     /**
      * 检测用户是否在其他地方登录
@@ -403,8 +465,12 @@ public interface Api {
 
     );
 
+
     @GET("/dictionary/getDicitionaryLanguageList")
     Observable<StatusCode<LanguageBean>> getDicitionaryLanguageList();
+
+
+
 
     @POST("/user/bindUser")
     Observable<StatusCode<LoginBean>> bindwechart(
@@ -413,6 +479,8 @@ public interface Api {
             @Query("weixinOpenid")String weixinOpenid,
             @Query("isBandWeiXin")int isBandWeiXin
     );
+
+
     @POST("/user/bindUser")
     Observable<StatusCode<LoginBean>> bindUqq(
             @Query("languageType") int languageType,
@@ -420,6 +488,8 @@ public interface Api {
             @Query("qqOpenid")String qqOpenid,
             @Query("isBandQQ")int type
     );
+
+
 
     @POST("/dictionary/getCollectionStatus")
     Observable<StatusCode<Integer>> getCollectionStatus(
@@ -429,12 +499,60 @@ public interface Api {
             @Query("dictionaryId") int dictionaryId,
             @Query("isWord")int isWord
     );
+
     @POST("/dictionary/getCollectionStatus")
     Observable<StatusCode<Integer>> getCollectionStatus(
             @Query("languageType") int languageType,
             @Query("userId") String userId,
             @Query("content")String content,
             @Query("isWord")int isWord
+    );
+
+
+    @GET("/banner/getBanner")
+    Observable<StatusCode<FlashBannerBean>> getflashBanner(
+    );
+
+
+    /**
+     *
+     * @param languageType
+     * @param userId
+     * @param page
+     * @param size
+     * @param isSentence  1句子翻译记录 0 单词翻译 不传默认未0
+     * @return
+     */
+    @GET("/dictionary/getTranslateRecord")
+    Observable<StatusCode<HistoryBean>> getTranslateRecord(
+            @Query("languageType") int languageType,
+            @Query("userId") String userId,
+            @Query("page")int  page,
+            @Query("size")int size,
+            @Query("isSentence")int isSentence
+    );
+
+
+    @POST("/dictionary/addTranslateRecord")
+    Observable<StatusCode<Object>> addTranslateRecord(
+
+            @Query("languageType") int languageType,
+            @Query("userId") String userId,
+            @Query("type")int  type,
+            @Query("content")String content,
+            @Query("contentTwo")String contentTwo
+
+    );
+
+    @GET("/dictionary/searchThesaurus")
+    Observable<StatusCode<List<HistoryBean2>>> searchThesaurus(
+
+            @Query("languageType") int languageType,
+            @Query("content") String content,
+            @Query("page")int  page,
+            @Query("size")int size,
+            @Query("type")String data
+
     );
 
 }

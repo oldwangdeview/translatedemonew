@@ -23,14 +23,14 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/sp_18"
         android:textColor="@color/c_e94950"
-        android:text="支付成功"/>
+        android:text="@string/payfor_sessces_titlename"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/sp_14"
         android:textColor="@color/c_ff333333"
-        android:text="会员有效期"
+        android:text="@string/payfor_sessces_hyyouxq"
         android:layout_marginTop="@dimen/dp_57"/>
 
     <TextView
@@ -48,7 +48,7 @@
         android:layout_marginTop="@dimen/dp_60"
         android:background="@drawable/payfor_sess_btn"
         android:textSize="@dimen/sp_16"
-        android:text="立即体验"
+        android:text="@string/payfor_sessces_ljty"
         android:textColor="@color/c_ffffff"/>
     </LinearLayout>
 </LinearLayout>

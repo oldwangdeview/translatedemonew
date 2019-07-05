@@ -54,7 +54,9 @@ public class AboutUsActivty  extends BaseActivity {
     TextView phone;
     @BindView(R.id.version_name)
     TextView version_name;
-    private Dialog mLoadingDialog;
+    @BindView(R.id.email_text)
+    TextView email_text;
+
     @Override
     protected void initView() {
         setContentView(R.layout.activity_aboutus);
@@ -84,20 +86,20 @@ public class AboutUsActivty  extends BaseActivity {
 
     @OnClick(R.id.phone)
     public void callphone(){
-          if(!TextUtils.isEmpty(mphone)&&UIUtils.isPhoneNumber(mphone)){
+//          if(!TextUtils.isEmpty(mphone)&&UIUtils.isPhoneNumber(mphone)){
               try {
 
 
                   Intent intent = new Intent(Intent.ACTION_CALL,Uri.parse("tel:"+mphone));
                   startActivity(intent);
               }catch (Exception e){
-
+                  ToastUtils.makeText("not PhoneNumber");
               }
-          }else{
-              ToastUtils.makeText("not PhoneNumber");
-          }
+//          }else{
+//              ToastUtils.makeText("not PhoneNumber");
+//          }
     }
-
+    private Dialog mLoadingDialog;
     public void getconfig(int type){
 
 
@@ -120,6 +122,9 @@ public class AboutUsActivty  extends BaseActivity {
             protected void _onNext(StatusCode<ConfigBean> stringStatusCode) {
                 LoadingDialogUtils.closeDialog(mLoadingDialog);
                 new LogUntil(AboutUsActivty.this,"content",stringStatusCode.getData().content);
+                if(!TextUtils.isEmpty(stringStatusCode.getData().email)){
+                    email_text.setText("  "+stringStatusCode.getData().email);
+                }
                 if(!TextUtils.isEmpty(stringStatusCode.getData().content)) {
 
                     HtmlText.from(stringStatusCode.getData().content)
@@ -179,7 +184,7 @@ public class AboutUsActivty  extends BaseActivity {
                 }
                 if(!TextUtils.isEmpty(stringStatusCode.getData().field)){
                     mphone = stringStatusCode.getData().field;
-                    phone.setText(stringStatusCode.getData().field);
+                    phone.setText("  "+stringStatusCode.getData().field);
                 }
 
             }
@@ -202,4 +207,9 @@ public class AboutUsActivty  extends BaseActivity {
     public void gotouseragreement(){
       UserAgreementActivity.statrtactivity(mcontent);
     }
+
+
+    private String mqqdata = "";
+
+
 }

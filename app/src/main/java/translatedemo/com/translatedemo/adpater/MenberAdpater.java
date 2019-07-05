@@ -18,43 +18,19 @@ import translatedemo.com.translatedemo.bean.DictionaryBean;
 import translatedemo.com.translatedemo.help.RecycleViewHolder;
 import translatedemo.com.translatedemo.util.UIUtils;
 
-public class MenberAdpater extends BaseAdapter {
+public class MenberAdpater extends BaseRecycleAdapter<DictionaryBean> {
+    ImageView image;
+    TextView content;
 
-    List<DictionaryBean> datas = new ArrayList<>();
 
-    Context mContext;
     public MenberAdpater(Context context, List<DictionaryBean> datas) {
-
-        this.datas = datas;
-        this.mContext = context;
-    }
-
-
-
-    @Override
-    public int getCount() {
-        return datas.size();
+        super(context, datas, R.layout.item_menbercidian);
     }
 
     @Override
-    public Object getItem(int position) {
-        return position;
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-        if(convertView==null){
-            convertView=UIUtils.inflate(mContext,R.layout.item_menbercidian);
-        }
-        ImageView image = convertView.findViewById(R.id.image);
-        TextView content = convertView.findViewById(R.id.content);
-        DictionaryBean s = datas.get(position);
+    protected void setData(RecycleViewHolder holder, DictionaryBean s, int position) {
+        image = holder.getItemView(R.id.image);
+        content = holder.getItemView(R.id.content);
         if(!TextUtils.isEmpty(s.image)){
 
             UIUtils.loadImageViewRoud(mContext,s.image,image,UIUtils.dip2px(5));
@@ -64,8 +40,55 @@ public class MenberAdpater extends BaseAdapter {
         if(!TextUtils.isEmpty(s.name)){
             content.setText(s.name);
         }
-
-        return convertView;
+//
     }
+
+//    List<DictionaryBean> datas = new ArrayList<>();
+//
+//    Context mContext;
+//    public MenberAdpater(Context context, List<DictionaryBean> datas) {
+//
+//        this.datas = datas;
+//        this.mContext = context;
+//    }
+//
+//
+//
+//    @Override
+//    public int getCount() {
+//        return datas.size();
+//    }
+//
+//    @Override
+//    public Object getItem(int position) {
+//        return position;
+//    }
+//
+//    @Override
+//    public long getItemId(int position) {
+//        return position;
+//    }
+//
+//    @Override
+//    public View getView(int position, View convertView, ViewGroup parent) {
+//
+//        if(convertView==null){
+//            convertView=UIUtils.inflate(mContext,R.layout.item_menbercidian);
+//        }
+//        ImageView image = convertView.findViewById(R.id.image);
+//        TextView content = convertView.findViewById(R.id.content);
+//        DictionaryBean s = datas.get(position);
+//        if(!TextUtils.isEmpty(s.image)){
+//
+//            UIUtils.loadImageViewRoud(mContext,s.image,image,UIUtils.dip2px(5));
+//
+//        }
+//
+//        if(!TextUtils.isEmpty(s.name)){
+//            content.setText(s.name);
+//        }
+//
+//        return convertView;
+//    }
 }
 

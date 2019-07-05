@@ -131,7 +131,7 @@ public class BindPhoneActivity extends BaseActivity {
 
     private void getcode(String phone){
         Observable observable =
-                ApiUtils.getApi().getCode(phone)
+                ApiUtils.getApi().getCode(phone,intentdata!=null?!TextUtils.isEmpty(intentdata.weixinOpenid)?1:!TextUtils.isEmpty(intentdata.qqOpenid)?2:1:1)
                         .compose(RxHelper.getObservaleTransformer())
                         .doOnSubscribe(new Consumer<Disposable>() {
                             @Override

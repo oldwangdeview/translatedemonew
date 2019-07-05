@@ -74,12 +74,27 @@ public class ReplacePhoneActivity  extends BaseActivity {
     @OnClick(R.id.login_text_getcode)
     public void getcode(){
         String oldphone_t =oldphone.getText().toString().trim();
+        String newpgone_t = newphone.getText().toString().trim();
         if(TextUtils.isEmpty(oldphone_t)){
             ToastUtils.makeText(getResources().getString(R.string.login_error_notphonenumber));
             return;
         }
+        if(!UIUtils.isPhoneNumber(oldphone_t)){
+            ToastUtils.makeText(this.getResources().getString(R.string.login_error_isnotphone));
+            return;
+        }
+
+        if(TextUtils.isEmpty(newpgone_t)){
+            ToastUtils.makeText(this.getResources().getString(R.string.replacephone_text_newphone));
+            return;
+        }
+        if(!UIUtils.isPhoneNumber(newpgone_t)){
+            ToastUtils.makeText(this.getResources().getString(R.string.login_error_isnotphone));
+            return;
+        }
+
         if(GET_CODE) {
-            getcode(oldphone_t);
+            getcode(oldphone_t,newpgone_t);
         }
 
     }
@@ -92,18 +107,18 @@ public class ReplacePhoneActivity  extends BaseActivity {
             ToastUtils.makeText(this.getResources().getString(R.string.replacephone_text_oldphone));
             return;
         }
-//        if(!UIUtils.isPhoneNumber(oldphone_t)){
-//            ToastUtils.makeText(this.getResources().getString(R.string.login_error_isnotphone));
-//            return;
-//        }
+        if(!UIUtils.isPhoneNumber(oldphone_t)){
+            ToastUtils.makeText(this.getResources().getString(R.string.login_error_isnotphone));
+            return;
+        }
         if(TextUtils.isEmpty(newpgone_t)){
             ToastUtils.makeText(this.getResources().getString(R.string.replacephone_text_newphone));
             return;
         }
-//        if(!UIUtils.isPhoneNumber(newpgone_t)){
-//            ToastUtils.makeText(this.getResources().getString(R.string.login_error_isnotphone));
-//            return;
-//        }
+        if(!UIUtils.isPhoneNumber(newpgone_t)){
+            ToastUtils.makeText(this.getResources().getString(R.string.login_error_isnotphone));
+            return;
+        }
         if(TextUtils.isEmpty(code_t)){
             ToastUtils.makeText(this.getResources().getString(R.string.replacephone_text_code));
             return;
@@ -162,9 +177,9 @@ public class ReplacePhoneActivity  extends BaseActivity {
 
 
 
-    private void getcode(String phone){
+    private void getcode(String phone,String newpgone_t){
         Observable observable =
-                ApiUtils.getApi().getCode(phone)
+                ApiUtils.getApi().getCode(phone,1,newpgone_t)
                         .compose(RxHelper.getObservaleTransformer())
                         .doOnSubscribe(new Consumer<Disposable>() {
                             @Override

@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -43,6 +44,11 @@ import com.google.gson.reflect.TypeToken;
 import com.xiaweizi.cornerslibrary.CornersProperty;
 import com.xiaweizi.cornerslibrary.RoundCornersTransformation;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -58,6 +64,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -65,10 +72,136 @@ import java.util.regex.Pattern;
 import translatedemo.com.translatedemo.R;
 import translatedemo.com.translatedemo.activity.MainActivity;
 import translatedemo.com.translatedemo.application.BaseApplication;
+import translatedemo.com.translatedemo.base.BaseActivity;
 import translatedemo.com.translatedemo.contans.Contans;
 
 
 public class UIUtils {
+
+
+	public static  int[] image1 = {
+			R.mipmap.lg_image2,
+			R.mipmap.lg_image3,
+			R.mipmap.lg_image1,
+			R.mipmap.lg_image14,
+			R.mipmap.image_my,
+			R.mipmap.lg_image4,
+			R.mipmap.lg_image11,
+			R.mipmap.lg_image6,
+			R.mipmap.lg_image7,
+			R.mipmap.lg_image8,
+			R.mipmap.lg_image5,
+			R.mipmap.lg_image9,
+			R.mipmap.lg_image10,
+			R.mipmap.lg_image12,
+			R.mipmap.lg_image13,
+			R.mipmap.image_yl,
+			R.mipmap.image_lfhly,
+			R.mipmap.image_amhly,
+			R.mipmap.image_alab,
+			R.mipmap.image_asabj,
+			R.mipmap.image_bsjer,
+			R.mipmap.image_bols,
+			R.mipmap.image_bjly,
+			R.mipmap.image_mjly,
+			R.mipmap.image_bslyy,
+			R.mipmap.image_jtlnyy,
+			R.mipmap.image_swy,
+			R.mipmap.image_kxjy,
+			R.mipmap.image_jacky,
+			R.mipmap.image_wesy,
+			R.mipmap.image_danmy,
+			R.mipmap.image_xilayu,
+			R.mipmap.image_wordy,
+			R.mipmap.image_aslyy,
+			R.mipmap.image_bakyy,
+			R.mipmap.image_bsy,
+			R.mipmap.image_fenlany,
+			R.mipmap.image_flby,
+			R.mipmap.image_feijiyu,
+			R.mipmap.image_fulixiyu,
+			R.mipmap.image_aerlany,
+			R.mipmap.image_sglangaiery,
+			R.mipmap.image_jialixiyay,
+			R.mipmap.image_jjlty,
+			R.mipmap.image_hsy,
+			R.mipmap.image_xwyy,
+			R.mipmap.image_xbolaiyu,
+			R.mipmap.image_yindiyu,
+			R.mipmap.image_kluodiyay,
+			R.mipmap.image_haidikeliaoeryu,
+			R.mipmap.image_xyaliyu,
+			R.mipmap.image_yameiliyayu,
+			R.mipmap.image_yiboyu,
+			R.mipmap.image_bindaotyu,
+			R.mipmap.image_yinliwazhuayu,
+			R.mipmap.image_gelujiyayu,
+			R.mipmap.image_hashakeyu,
+			R.mipmap.image_hashakeyuxilier,
+			R.mipmap.image_gaomianyu,
+			R.mipmap.image_kaladayu,
+			R.mipmap.image_hanyu,
+			R.mipmap.image_kuerdeyu,
+			R.mipmap.image_jierjisiyu,
+			R.mipmap.image_ladingyu,
+			R.mipmap.image_lshenbaiyu,
+			R.mipmap.image_laowoyu,
+			R.mipmap.image_litaowanyu,
+			R.mipmap.image_latuoweiyayu,
+			R.mipmap.image_maerjiasyu,
+			R.mipmap.image_maliyu,
+			R.mipmap.image_maoliyu,
+			R.mipmap.image_maqidunyu,
+			R.mipmap.image_malayalamuyu,
+			R.mipmap.image_mengguyuxler,
+			R.mipmap.image_maladiyu,
+			R.mipmap.image_shandimaliyu,
+			R.mipmap.image_maqitayu,
+			R.mipmap.image_baimiaowen,
+			R.mipmap.image_miandianyu,
+			R.mipmap.image_niboeryu,
+			R.mipmap.image_helanyu,
+			R.mipmap.image_luoweiyu,
+			R.mipmap.image_qiqiewayu,
+			R.mipmap.image_kelegeluotuoaimiyu,
+			R.mipmap.image_qiongzhepuyu,
+			R.mipmap.image_papiawentuoyi,
+			R.mipmap.image_bolanyu,
+			R.mipmap.image_pushentuyu,
+			R.mipmap.image_luomaniyayu,
+			R.mipmap.image_xindeyu,
+			R.mipmap.image_shenjialuoyu,
+			R.mipmap.image_siluofuckyu,
+			R.mipmap.unage_silewenniyayu,
+			R.mipmap.image_saboyayu,
+			R.mipmap.image_xiulayu,
+			R.mipmap.image_suomaliyu,
+			R.mipmap.image_aerbaliyayu,
+			R.mipmap.image_saierweiyayu,
+			R.mipmap.image_saisuotuoyu,
+			R.mipmap.image_yinnizhuandiyu,
+			R.mipmap.image_ruidianyu,
+			R.mipmap.image_siwaxiliyu,
+			R.mipmap.image_taimieryu,
+			R.mipmap.image_tailuguyu,
+			R.mipmap.image_tajikeyu,
+			R.mipmap.image_taiyu,
+			R.mipmap.image_tangjiayu,
+			R.mipmap.image_tuerqiyu,
+			R.mipmap.image_dadayu,
+			R.mipmap.image_taxitiyu,
+			R.mipmap.image_wudeerteyu,
+			R.mipmap.image_wukelanyu,
+			R.mipmap.image_wuerduyu,
+			R.mipmap.image_wuzibiekeyu,
+			R.mipmap.image_lanfeishakeyu,
+			R.mipmap.image_yidixuyu,
+			R.mipmap.image_yuelubayu,
+			R.mipmap.image_youkatanmayayu,
+			R.mipmap.image_yueyu,
+			R.mipmap.image_lanfeizulu
+
+	};
 
 	public static MainActivity mainactivity = null;
 	private static String Ppath = Environment.getExternalStorageDirectory()
@@ -694,7 +827,8 @@ public class UIUtils {
 
 	     switch ((int)motn){
 			 case 12:
-			 	 year = mContext.getResources().getString(R.string.oneyear);
+
+					 year = mContext.getResources().getString(R.string.oneyear);
 			 	break;
 			 case 6:
 				 year = mContext.getResources().getString(R.string.byear);
@@ -731,15 +865,24 @@ public class UIUtils {
 
 	public static String getJson(String fileName) {
 		StringBuilder stringBuilder = new StringBuilder();
+        Scanner sc = null;
 		try {
 			InputStream is = new FileInputStream(new File(fileName));
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
-			String line;
-			while ((line = bufferedReader.readLine()) != null) {
-				stringBuilder.append(line);
-			}
+
+
+            sc = new Scanner(is,"UTF-8");
+            while (sc.hasNextLine()) {
+//                String line = ;
+                stringBuilder.append(sc.nextLine());
+                // System.out.println(line);
+            }
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+
+
+		if (sc != null) {
+			sc.close();
 		}
 
 		return stringBuilder.toString();
@@ -779,5 +922,487 @@ public class UIUtils {
 		return versionName;
 	}
 
+	/**
+	 * 设置img标签下的width为手机屏幕宽度，height自适应
+	 *
+	 * @param data html字符串
+	 * @return 更新宽高属性后的html字符串
+	 */
+	public static  String getNewData(String data ,Context mCo) {
+		Document document = Jsoup.parse(data);
+		int screenWidth = getScreenWidth(mCo);
+		Elements pElements = document.select("p:has(img)");
+		for (Element pElement : pElements) {
+			pElement.attr("style", "text-align:center");
+			pElement.attr("max-width", String.valueOf(screenWidth + "px"))
+					.attr("height", "auto");
+			pElement.attr("width", String.valueOf(screenWidth + "px"));
 
+
+		}
+		Elements imgElements = document.select("img");
+		for (Element imgElement : imgElements) {
+			//重新设置宽高
+			imgElement.attr("max-width", "100%")
+					.attr("height", "auto");
+			imgElement.attr("width", "100%");
+			imgElement.attr("style", "max-width:100%;height:auto");
+		}
+		Log.i("newData:", document.toString());
+		return document.toString();
+	}
+
+	/**
+	 * 设置img标签下的width为手机屏幕宽度，height自适应
+	 *
+	 * @param data html字符串
+	 * @return 更新宽高属性后的html字符串
+	 */
+	public static  String getNewData1(String data ,Context mCo) {
+		Document document = Jsoup.parse(data);
+		int screenWidth = getScreenWidth(mCo);
+		Elements pElements = document.select("p:has(iframe)");
+		for (Element pElement : pElements) {
+			pElement.attr("style", "text-align:center");
+			pElement.attr("width", String.valueOf(screenWidth + "px"));
+
+		}
+		Elements imgElements = document.select("iframe");
+		for (Element imgElement : imgElements) {
+			//重新设置宽高
+			imgElement.attr("max-width", "100%");
+//					.attr("height", "auto");
+
+			imgElement.attr("width", "100%");
+			imgElement.attr("style", "max-width:100%");
+		}
+		Log.i("newData:", document.toString());
+		return document.toString();
+	}
+
+
+	public static String getNewMessageData(String data){
+
+		if(!TextUtils.isEmpty(data)){
+			if(data.endsWith("།")){
+				data = data.substring(0,data.lastIndexOf("།"));
+			}
+			if(data.endsWith("་")){
+				data = data.substring(0,data.lastIndexOf("་"));
+			}
+		}
+
+		return  data;
+	}
+
+
+
+	public static  String getlangvagetype(String data,String[] choicedata1){
+		String outputexttype = "";
+		for(int i=0;i<choicedata1.length;i++){
+			if(data.equals(choicedata1[i])){
+				switch (i){
+					case 0:
+						outputexttype = "zh";
+						break;
+					case 1:
+						outputexttype = "en";
+						break;
+					case 2:
+						outputexttype = "ti";
+						break;
+					case 3:
+						outputexttype = "uy";
+						break;
+					case 4:
+						outputexttype = "mn";
+						break;
+					case 5:
+						outputexttype = "cht";
+						break;
+					case 6:
+						outputexttype = "ja";
+						break;
+					case 7:
+						outputexttype = "fr";
+						break;
+					case 8 :
+						outputexttype = "es";
+						break;
+					case 9:
+						outputexttype = "pt";
+						break;
+					case 10:
+						outputexttype = "de";
+						break;
+					case 11:
+						outputexttype = "it";
+						break;
+					case 12:
+						outputexttype = "ru";
+						break;
+					case 13:
+						outputexttype = "id";
+						break;
+					case 14:
+						outputexttype = "ms";
+						break;
+					case 15:
+						outputexttype = "vi";
+						break;
+
+					case 16:
+						outputexttype = "af";
+						break;
+					case 17:
+						outputexttype = "am";
+						break;
+					case 18:
+						outputexttype = "ar";
+						break;
+					case 19:
+						outputexttype = "az";
+						break;
+					case 20:
+						outputexttype = "ba";
+						break;
+					case 21:
+						outputexttype = "be";
+						break;
+					case 22:
+						outputexttype = "bg";
+						break;
+
+
+
+					case 23:
+						outputexttype = "bn";
+						break;
+					case 24:
+						outputexttype = "bs";
+						break;
+					case 25:
+						outputexttype = "ca";
+						break;
+					case 26:
+						outputexttype = "ceb";
+						break;
+					case 27:
+						outputexttype = "co";
+						break;
+					case 28:
+						outputexttype = "cs";
+						break;
+					case 29:
+						outputexttype = "cy";
+						break;
+
+
+
+					case 30:
+						outputexttype = "da";
+						break;
+					case 31:
+						outputexttype = "el";
+						break;
+					case 32:
+						outputexttype = "eo";
+						break;
+					case 33:
+						outputexttype = "et";
+						break;
+					case 34:
+						outputexttype = "eu";
+						break;
+					case 35:
+						outputexttype = "fa";
+						break;
+					case 36:
+						outputexttype = "fi";
+						break;
+
+					case 37:
+						outputexttype = "fil";
+						break;
+					case 38:
+						outputexttype = "fj";
+						break;
+					case 39:
+						outputexttype = "fy";
+						break;
+					case 40:
+						outputexttype = "ga";
+						break;
+					case 41:
+						outputexttype = "gd";
+						break;
+					case 42:
+						outputexttype = "gl";
+						break;
+					case 43:
+						outputexttype = "gu";
+						break;
+
+					case 44:
+						outputexttype = "ha";
+						break;
+					case 45:
+						outputexttype = "haw";
+						break;
+					case 46:
+						outputexttype = "he";
+						break;
+					case 47:
+						outputexttype = "hi";
+						break;
+					case 48:
+						outputexttype = "hr";
+						break;
+					case 49:
+						outputexttype = "ht";
+						break;
+					case 50:
+						outputexttype = "hu";
+						break;
+
+
+					case 51:
+						outputexttype = "hy";
+						break;
+					case 52:
+						outputexttype = "ig";
+						break;
+					case 53:
+						outputexttype = "is";
+						break;
+					case 54:
+						outputexttype = "jv";
+						break;
+					case 55:
+						outputexttype = "jy";
+						break;
+					case 56:
+						outputexttype = "ka";
+						break;
+					case 57:
+						outputexttype = "kk";
+						break;
+
+
+					case 58:
+						outputexttype = "km";
+						break;
+					case 59:
+						outputexttype = "kn";
+						break;
+					case 60:
+						outputexttype = "ko";
+						break;
+					case 61:
+						outputexttype = "ku";
+						break;
+					case 62:
+						outputexttype = "ky";
+						break;
+					case 63:
+						outputexttype = "la";
+						break;
+					case 64:
+						outputexttype = "lb";
+						break;
+
+					case 65:
+						outputexttype = "lo";
+						break;
+					case 66:
+						outputexttype = "lt";
+						break;
+					case 67:
+						outputexttype = "lv";
+						break;
+					case 68:
+						outputexttype = "mg";
+						break;
+					case 69:
+						outputexttype = "mhr";
+						break;
+					case 70:
+						outputexttype = "mi";
+						break;
+					case 71:
+						outputexttype = "mk";
+						break;
+
+
+
+					case 72:
+						outputexttype = "ml";
+						break;
+					case 73:
+						outputexttype = "mn";
+						break;
+					case 74:
+						outputexttype = "mr";
+						break;
+					case 75:
+						outputexttype = "mrj";
+						break;
+					case 76:
+						outputexttype = "mt";
+						break;
+					case 77:
+						outputexttype = "mww";
+						break;
+					case 78:
+						outputexttype = "my";
+						break;
+
+
+					case 79:
+						outputexttype = "ne";
+						break;
+					case 80:
+						outputexttype = "nl";
+						break;
+					case 81:
+						outputexttype = "no";
+						break;
+					case 82:
+						outputexttype = "ny";
+						break;
+					case 83:
+						outputexttype = "otq";
+						break;
+					case 84:
+						outputexttype = "pa";
+						break;
+					case 85:
+						outputexttype = "pap";
+						break;
+
+
+					case 86:
+						outputexttype = "pl";
+						break;
+					case 87:
+						outputexttype = "ps";
+						break;
+					case 88:
+						outputexttype = "ro";
+						break;
+					case 89:
+						outputexttype = "sd";
+						break;
+					case 90:
+						outputexttype = "si";
+						break;
+					case 91:
+						outputexttype = "sk";
+						break;
+					case 92:
+						outputexttype = "sl";
+						break;
+
+
+
+
+					case 93:
+						outputexttype = "sm";
+						break;
+					case 94:
+						outputexttype = "sn";
+						break;
+					case 95:
+						outputexttype = "so";
+						break;
+					case 96:
+						outputexttype = "sq";
+						break;
+					case 97:
+						outputexttype = "sr";
+						break;
+					case 98:
+						outputexttype = "st";
+						break;
+					case 99:
+						outputexttype = "su";
+						break;
+
+
+					case 100:
+						outputexttype = "sv";
+						break;
+					case 101:
+						outputexttype = "sw";
+						break;
+					case 102:
+						outputexttype = "ta";
+						break;
+					case 103:
+						outputexttype = "te";
+						break;
+					case 104:
+						outputexttype = "tg";
+						break;
+					case 105:
+						outputexttype = "th";
+						break;
+					case 106:
+						outputexttype = "to";
+						break;
+
+
+					case 107:
+						outputexttype = "tr";
+						break;
+					case 108:
+						outputexttype = "tt";
+						break;
+					case 109:
+						outputexttype = "ty";
+						break;
+					case 110:
+						outputexttype = "udm";
+						break;
+					case 111:
+						outputexttype = "uk";
+						break;
+					case 112:
+						outputexttype = "ur";
+						break;
+					case 113:
+						outputexttype = "uz";
+						break;
+
+					case 114:
+						outputexttype = "xh";
+						break;
+					case 115:
+						outputexttype = "yi";
+						break;
+					case 116:
+						outputexttype = "yo";
+						break;
+					case 117:
+						outputexttype = "yua";
+						break;
+					case 118:
+						outputexttype = "yue";
+						break;
+					case 119:
+						outputexttype = "zu";
+						break;
+
+
+
+
+
+				}
+			}else{
+				continue;
+			}
+		}
+
+		return outputexttype;
+	}
 }

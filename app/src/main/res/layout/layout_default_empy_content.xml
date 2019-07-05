@@ -16,6 +16,7 @@
             android:layout_width="@dimen/dp_110"
             android:layout_height="@dimen/dp_100" />
         <TextView
+            android:id="@+id/nomoremessage"
             android:layout_marginTop="@dimen/dp_36"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

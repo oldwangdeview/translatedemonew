@@ -36,6 +36,7 @@ public class ThreeTranslateBean implements Serializable {
     public String name;
     public String from;
     public String date;
+    public String adjective;
     public List<SentenceDTOListBean> sentenceDTOList = new ArrayList<>();
 
 

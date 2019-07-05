@@ -11,10 +11,10 @@ android {
     compileSdkVersion 26
     defaultConfig {
         applicationId "translatedemo.com.translatedemo"
-        minSdkVersion 22
+        minSdkVersion 19
         targetSdkVersion 26
-        versionCode 1
-        versionName "1.0.0"
+        versionCode 9
+        versionName "1.0.8"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -30,13 +30,11 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support:design:26.1.0'
-    //    implementation 'com.android.support:support-v4:26.3.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation 'com.android.support:support-vector-drawable:26.1.0'
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.0.2'
-    //implementation 'com.squareup.retrofit2:adapter-rxjava:2.0.0'
     implementation 'io.reactivex.rxjava2:rxjava:2.0.1'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'com.github.xiaweizi:RoundCornersView:v1.0'
@@ -44,12 +42,12 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.0.0'
     implementation 'com.github.bumptech.glide:glide:3.7.0'
     implementation 'com.bigkoo:convenientbanner:2.0.5'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.1.2'
     testImplementation 'junit:junit:4.12'
     implementation 'com.orhanobut:hawk:2.0.0-Alpha'
     implementation 'com.github.wangchenyan:html-text:1.0'
+    implementation 'org.jsoup:jsoup:1.11.3'
     implementation 'ch.ielse:switchbutton:1.0.1'
-
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.1.2'
     implementation 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
     implementation 'com.bigkoo:alertview:1.0.3'
     implementation(name: 'alipaySdk-15.5.9-20181123210601', ext: 'aar')

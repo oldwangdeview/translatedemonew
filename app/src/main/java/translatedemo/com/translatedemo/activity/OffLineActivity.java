@@ -98,11 +98,18 @@ public class OffLineActivity extends BaseActivity {
         madpater.setlistOnclickLister(new ListOnclickLister() {
             @Override
             public void onclick(View v, int position) {
-                if(BaseActivity.getuser().isMember==1) {
+                if(listdata.get(position).isMemberVisible==1) {
+                    if(BaseActivity.getuser().isMember==1) {
+                        dolodpath = FileUtils.getSDRoot() + "/translate/" + listdata.get(position).id + ".json";
+                        showLoadingDialog();
+                        downFile((Api.isRelease ? Api.baseUrl : Api.testBaseUrl) + "/dictionary/downThesaurus?languageType=" + BaseActivity.getLanguetype(OffLineActivity.this) + "&id=" + listdata.get(position).id + "&userId=" + BaseActivity.getuser().id);
+                    }else{
+                        showdialog();
+                    }
+                }else{
                     dolodpath = FileUtils.getSDRoot() + "/translate/" + listdata.get(position).id + ".json";
                     showLoadingDialog();
                     downFile((Api.isRelease ? Api.baseUrl : Api.testBaseUrl) + "/dictionary/downThesaurus?languageType=" + BaseActivity.getLanguetype(OffLineActivity.this) + "&id=" + listdata.get(position).id + "&userId=" + BaseActivity.getuser().id);
-                }else{
 
                 }
                 }
@@ -112,15 +119,11 @@ public class OffLineActivity extends BaseActivity {
     }
 
     public void showdialog(){
-        AlertView alertView = new AlertView(getResources().getString(R.string.help), getResources().getString(R.string.dialog_message), null, null, new String[]{getResources().getString(R.string.translate_text_quxiao), getResources().getString(R.string.translate_text_qued)}, this, AlertView.Style.Alert, new OnItemClickListener() {
+        AlertView alertView = new AlertView(getResources().getString(R.string.offlin_dialog_title), getResources().getString(R.string.offlin_dialog_text), null, null, new String[]{getResources().getString(R.string.translate_text_quxiao), getResources().getString(R.string.translate_text_qued)}, this, AlertView.Style.Alert, new OnItemClickListener() {
             @Override
             public void onItemClick(Object o, int position) {
                 if (position==1){
-                    BaseActivity.user=null;
-                    PreferencesUtils.getInstance().putString(BaseActivity.LOGINUSER,"");
-                    EventBus.getDefault().post(new OverMainactivty());
-                    LoginActivity.startactivity(OffLineActivity.this);
-                    finish();
+                    MenberCenterActivity.startactivity(OffLineActivity.this);
                 }else{
                     return;
                 }
